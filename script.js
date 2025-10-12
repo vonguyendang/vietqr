@@ -108,21 +108,21 @@ function genAndScanQR() {
 }
 
 /**
- * MỚI: Hàm sao chép văn bản và cung cấp phản hồi trên nút
+ * Hàm sao chép văn bản và cung cấp phản hồi trên nút
  * @param {string} textToCopy - Nội dung cần sao chép
- * @param {HTMLElement} buttonElement - Nút bấm đã được nhấn
+ * @param {HTMLElement} buttonElement - Nút bấm để hiển thị phản hồi
  */
 function copyToClipboard(textToCopy, buttonElement) {
-    if (!textToCopy || textToCopy === '[N/A]' || textToCopy === '[Không đọc được nội dung]') {
+    if (!textToCopy || textToCopy.startsWith('[')) {
         return; // Không làm gì nếu không có nội dung hợp lệ
     }
     
     navigator.clipboard.writeText(textToCopy).then(() => {
-        const originalIcon = buttonElement.innerHTML;
+        const originalIconHTML = buttonElement.innerHTML;
         buttonElement.innerHTML = '<i class="fa-solid fa-check"></i>';
         
         setTimeout(() => {
-            buttonElement.innerHTML = originalIcon;
+            buttonElement.innerHTML = originalIconHTML;
         }, 2000);
     }).catch(err => {
         console.error('Không thể sao chép: ', err);
@@ -149,13 +149,25 @@ async function downloadQR() {
     }
 }
 
-// Gán sự kiện cho các nút
+// --- CẬP NHẬT: Gán sự kiện cho cả nút và văn bản ---
+
+// Sao chép Nội dung QR
 document.getElementById('copyQrContentBtn').addEventListener('click', function() {
     copyToClipboard(document.getElementById('qrstr').innerText, this);
 });
+document.getElementById('qrstr').addEventListener('click', function() {
+    const button = document.getElementById('copyQrContentBtn');
+    copyToClipboard(this.innerText, button);
+});
 
+// Sao chép Hash CRC
 document.getElementById('copyCrcBtn').addEventListener('click', function() {
     copyToClipboard(document.getElementById('qrc').innerText, this);
 });
+document.getElementById('qrc').addEventListener('click', function() {
+    const button = document.getElementById('copyCrcBtn');
+    copyToClipboard(this.innerText, button);
+});
 
+// Tải xuống
 document.getElementById('downloadBtn').addEventListener('click', downloadQR);
