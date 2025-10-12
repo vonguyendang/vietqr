@@ -1,0 +1,191 @@
+/* --- BIẾN MÀU VÀ CÀI ĐẶT CHUNG --- */
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #17a2b8;
+  --secondary-hover: #117a8b;
+  --success-color: #28a745;
+  --light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --body-bg: #f4f7f9;
+  --card-bg: #ffffff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+}
+
+/* --- MỚI: TIÊU ĐỀ TRANG WEB --- */
+.site-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+.site-header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+.site-header p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* --- BỐ CỤC HAI CỘT CÂN BẰNG --- */
+.main-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+.form-column, .qr-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* --- KIỂU DÁNG CARD --- */
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 30px;
+  width: 100%;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+.card-header h3 {
+  margin: 0 0 25px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* --- KIỂU DÁNG FORM --- */
+.formrow { margin-bottom: 18px; }
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+label.required::after { content: " *"; color: #dc3545; }
+
+input[type="text"], input[type="number"], select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* --- KIỂU DÁNG NÚT BẤM --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.2s ease-in-out;
+  gap: 8px;
+}
+
+.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
+
+.btn-secondary { background-color: var(--secondary-color); color: white; }
+.btn-secondary:hover:not(:disabled) { background-color: var(--secondary-hover); }
+
+/* --- KHU VỰC KẾT QUẢ --- */
+.qr-column .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#qr-result-placeholder { text-align: center; }
+#qr-result-placeholder i { font-size: 60px; color: #e0e0e0; }
+#qr-result-placeholder p { margin-top: 15px; font-size: 18px; color: #a0a0a0; font-weight: 500; }
+
+#qr-result-wrapper {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#qrimg {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.qr-info {
+    width: 100%;
+    text-align: left;
+    background-color: var(--light-gray);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    word-break: break-all;
+}
+
+.qr-info b { color: var(--text-muted); }
+.qr-info-content { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+#qrstr { cursor: pointer; font-weight: 500; }
+#copy-feedback { color: var(--success-color); font-weight: 500; font-size: 14px; }
+
+/* --- TÙY CHỈNH SELECT2 --- */
+.select2-container--default .select2-selection--single { height: 42px; border: 1px solid var(--border-color); border-radius: 6px; }
+.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 40px; padding-left: 12px; }
+.select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px; }
+.select2-dropdown { border: 1px solid var(--border-color); border-radius: 6px; box-shadow: var(--shadow); }
+.select2-results__option .bank-logo { height: 25px; margin-right: 10px; vertical-align: middle; }
+.select2-selection__rendered .bank-logo { height: 25px; margin-right: 10px; vertical-align: middle; }
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable { background-color: var(--primary-color); }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .main-container {
+        flex-direction: column;
+    }
+}
