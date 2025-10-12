@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VietQR Generator - Tạo mã QR thanh toán nhanh chóng</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Công cụ tạo mã VietQR</h1>
+    <p>Tạo mã QR thanh toán theo chuẩn Napas một cách nhanh chóng, an toàn và hoàn toàn miễn phí.</p>
+  </header>
+
+  <div class="main-container">
+    <div class="form-column">
+      <div class="card">
+        <div class="card-header">
+          <h3>Thông tin thanh toán</h3>
+        </div>
+        <form id="vietqrForm" onsubmit="event.preventDefault(); genAndScanQR();">
+          <div class="formrow">
+            <label for="bank-select" class="required">Ngân hàng:</label>
+            <select id="bank-select" style="width: 100%;"></select>
+            <input type="hidden" id="i_bank" />
+          </div>
+          <div class="formrow">
+            <label for="i_acc" class="required">Số tài khoản:</label>
+            <input type="text" id="i_acc" required/>
+          </div>
+          <div class="formrow">
+            <label for="qr-template-select">Mẫu QR:</label>
+            <select id="qr-template-select">
+                <option value="compact" selected>Compact (Kèm logo Napas)</option>
+                <option value="compact2">Print Compact (Thông tin gọn)</option>
+                <option value="print">Bản in (Đầy đủ thông tin)</option>
+                <option value="qr_only">Chỉ mã QR</option>
+            </select>
+          </div>
+          <div class="formrow">
+            <label for="i_amount">Số tiền (Tùy chọn):</label>
+            <input type="number" id="i_amount" placeholder="VD: 50000"/>
+          </div>
+          <div class="formrow">
+            <label for="i_desc">Nội dung (Tùy chọn):</label>
+            <input type="text" id="i_desc" placeholder="VD: Chuyen khoan"/>
+          </div>
+          <div class="formrow">
+            <label for="i_name">Tên tài khoản (Tùy chọn):</label>
+            <input type="text" id="i_name" placeholder="Tên không dấu"/>
+          </div>
+          <button id="submitBtn" type="submit" class="btn btn-primary" disabled>
+            <i class="fa-solid fa-qrcode"></i>
+            Tạo mã QR
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="qr-column">
+      <div class="card">
+        <div id="qr-result-placeholder">
+            <i class="fa-solid fa-qrcode"></i>
+            <p>Mã QR sẽ xuất hiện ở đây</p>
+        </div>
+        <div id="qr-result-wrapper">
+            <img id="qrimg" crossorigin="anonymous" />
+            <div class="qr-info">
+                <b>Nội dung QR:</b>
+                <div class="qr-info-content">
+                    <span id="qrstr"></span>
+                    <button id="copyQrContentBtn" class="copy-btn" title="Sao chép nội dung QR">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="qr-info">
+                <b>Hash CRC:</b>
+                <div class="qr-info-content">
+                    <span id="qrc"></span>
+                    <button id="copyCrcBtn" class="copy-btn" title="Sao chép Hash CRC">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <button id="downloadBtn" class="btn btn-secondary">
+                <i class="fa-solid fa-download"></i>
+                Tải xuống ảnh QR
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
