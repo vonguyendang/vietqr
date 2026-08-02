@@ -1,3 +1,17 @@
+let isTurnstileValid = false;
+let isBankLoaded = false;
+
+function onTurnstileSuccess(token) {
+    isTurnstileValid = true;
+    checkSubmitBtnState();
+}
+
+function checkSubmitBtnState() {
+    if (isTurnstileValid && isBankLoaded) {
+        $('#submitBtn').prop('disabled', false);
+    }
+}
+
 $(document).ready(function() {
     const bankSelectEl = $('#bank-select');
     const hiddenBankInput = $('#i_bank');
@@ -37,14 +51,31 @@ $(document).ready(function() {
             bankSelectEl.append(new Option("Lỗi mạng", "", true, true));
         },
         complete: function() {
-             submitBtn.prop('disabled', false);
+             isBankLoaded = true;
+             checkSubmitBtnState();
         }
     });
 
     bankSelectEl.on('change', function() {
         hiddenBankInput.val($(this).val());
     });
+    
+    fetchCounter();
 });
+
+async function fetchCounter() {
+    try {
+        const response = await fetch('/api/counter');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        if (data && data.success) {
+            document.getElementById('visitCount').innerText = data.formattedCount;
+        }
+    } catch (e) {
+        console.error('Lỗi khi tải bộ đếm:', e);
+        document.getElementById('visitCount').innerText = '15,305+';
+    }
+}
 
 function genAndScanQR() {
     const placeholder = document.getElementById('qr-result-placeholder');

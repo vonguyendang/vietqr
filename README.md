@@ -1,38 +1,69 @@
 # VietQR Generator
 
-Công cụ tạo mã QR thanh toán theo chuẩn VietQR (Napas247) một cách nhanh chóng, an toàn và hoàn toàn miễn phí. Dự án được xây dựng bằng HTML, CSS và JavaScript, sử dụng API công khai từ [vietqr.io](https://vietqr.io/) và hoạt động hoàn toàn phía client để đảm bảo an toàn thông tin cho người dùng.
+Công cụ tạo mã QR thanh toán theo chuẩn VietQR (Napas247) một cách nhanh chóng, an toàn và hoàn toàn miễn phí. Dự án được tối ưu hóa để triển khai trên Cloudflare, tích hợp sẵn các cơ chế chống DDoS và bộ đếm lượt truy cập ảo để tăng mức độ uy tín.
 
 ## Tính năng nổi bật
 
-- **Tạo QR nhanh chóng**: Tạo mã QR thanh toán chỉ với vài cú nhấp chuột.
-- **Danh sách ngân hàng cập nhật**: Tự động tải danh sách các ngân hàng hỗ trợ VietQR mới nhất.
-- **Tùy chỉnh thông tin**: Cho phép thêm số tiền, nội dung chuyển khoản và tên người nhận.
-- **Nhiều mẫu QR**: Cung cấp các mẫu QR khác nhau (gọn, in ấn, chỉ mã QR) để phù hợp với nhiều mục đích sử dụng.
-- **Xem trước và Tải xuống**: Hiển thị mã QR ngay lập tức và cho phép tải về dưới dạng ảnh PNG.
-- **Kiểm tra thông tin**: Phân tích và hiển thị chuỗi QR gốc cùng mã CRC hash để kiểm tra tính toàn vẹn.
-- **An toàn**: Mọi thông tin được xử lý trực tiếp trên trình duyệt của bạn, không có dữ liệu nào được gửi về máy chủ.
+- **Tạo QR nhanh chóng**: Khởi tạo mã QR thanh toán cá nhân hoặc doanh nghiệp dễ dàng.
+- **Tính an toàn cao (Chống DDoS)**: Tích hợp **Cloudflare Turnstile** ngăn chặn bot/scripts tự động spam request.
+- **Bộ đếm truy cập**: Sử dụng Cloudflare KV để theo dõi lượt truy cập (với số lượng ban đầu được thiết lập ở mức độ cao để tăng uy tín).
+- **Trải nghiệm mượt mà**: Giao diện đẹp, hiện đại, hỗ trợ nhiều tùy chọn hiển thị mã QR (gọn, in ấn, chi tiết).
+- **Hoạt động bảo mật**: Mọi thông tin thanh toán được xử lý phía trình duyệt, đảm bảo an toàn tuyệt đối.
 
-## Hướng dẫn sử dụng
+## 🚀 Hướng dẫn Deploy lên Cloudflare Pages (Miễn phí)
 
-Không cần cài đặt phức tạp. Bạn chỉ cần mở file `index.html` bằng bất kỳ trình duyệt web hiện đại nào.
+Dự án này rất thích hợp để host trên **Cloudflare Pages** vì nó hoàn toàn là tĩnh (HTML/JS/CSS) nhưng có khả năng tận dụng thêm sức mạnh của Cloudflare Functions.
 
-1.  **Chọn Ngân hàng**: Chọn ngân hàng của bạn từ danh sách thả xuống.
-2.  **Nhập Số tài khoản**: Điền chính xác số tài khoản của bạn.
-3.  **Tùy chọn**:
-    -   **Số tiền**: Nhập số tiền bạn muốn người khác chuyển.
-    -   **Nội dung**: Nhập nội dung chuyển khoản (ví dụ: `Thanh toan don hang 123`).
-    -   **Tên tài khoản**: Nhập tên tài khoản của bạn (không dấu) để hiển thị trên QR (nếu cần).
-4.  **Tạo mã**: Nhấn nút **"Tạo mã QR"**.
-5.  **Sử dụng**:
-    -   Mã QR sẽ hiện ra ở khung bên phải.
-    -   Sử dụng ứng dụng ngân hàng trên điện thoại để quét mã.
-    -   Nhấn nút **"Tải xuống ảnh QR"** để lưu hình ảnh về máy.
+### 1. Chuẩn bị (Tạo KV Namespace)
+Để bộ đếm truy cập hoạt động, bạn cần tạo một không gian lưu trữ (KV Namespace):
+1. Đăng nhập vào [Cloudflare Dashboard](https://dash.cloudflare.com/).
+2. Chọn **Workers & Pages** -> **KV**.
+3. Nhấn **Create a namespace**, nhập tên là `VIETQR_KV` và nhấn Add.
 
-## Công nghệ sử dụng
+### 2. Triển khai code (Deploy)
 
--   **Frontend**: HTML, CSS, JavaScript
--   **Thư viện**: jQuery, Select2, jsQR
--   **API**: [vietqr.io](https://vietqr.io/) để tạo và lấy danh sách ngân hàng.
+**Cách 1: Deploy tự động qua GitHub (Khuyên dùng)**
+1. Đẩy code này lên một repository GitHub cá nhân của bạn.
+2. Trên Cloudflare, vào **Workers & Pages** -> **Overview** -> **Create application** -> **Pages** -> **Connect to Git**.
+3. Chọn repo GitHub chứa dự án của bạn.
+4. Ở phần **Build settings**, để trống phần *Build command* và *Build output directory*.
+5. Cuộn xuống phần **Environment variables (advanced)**:
+   - Chuyển sang tab **KV namespace bindings**.
+   - Thêm một biến có tên (Variable name) là `VIETQR_KV` và chọn giá trị là Namespace bạn vừa tạo ở bước 1.
+6. Bấm **Save and Deploy**. 
+
+**Cách 2: Sử dụng Wrangler CLI (Dành cho Developer)**
+```bash
+npm install -g wrangler
+wrangler pages deploy . --project-name vietqr
+# Sau khi deploy xong, vào Dashboard Cloudflare để gắn (bind) biến KV namespace như hướng dẫn Cách 1.
+```
+
+### 3. Cấu hình cơ chế Chống DDoS & Spam (Cloudflare Turnstile)
+
+Để bảo vệ website khỏi các cuộc tấn công tự động (DDoS, spam click), dự án này sử dụng Cloudflare Turnstile:
+1. Vào Cloudflare Dashboard -> **Turnstile**.
+2. Nhấn **Add site**, nhập tên và tên miền (domain/pages.dev) của bạn.
+3. Chế độ widget khuyên dùng: **Invisible** hoặc **Managed**.
+4. Bạn sẽ nhận được một **Site Key**.
+5. Mở file `index.html` trong mã nguồn, tìm đến dòng có `data-sitekey="1x00000000000000000000AA"` và thay bằng Site Key thực tế của bạn.
+6. Đẩy code (commit & push) lại lên GitHub để Cloudflare tự động cập nhật.
+
+*(Ngoài Turnstile, bạn nên bật thêm "Bot Fight Mode" và tạo một số Rate Limiting Rules trong mục Security > WAF trên Cloudflare để trang web kiên cố nhất).*
+
+## Chạy thử nghiệm trên máy cá nhân (Local)
+
+Bạn có thể mở trực tiếp file `index.html` bằng trình duyệt để xem giao diện, tuy nhiên bộ đếm (counter) sẽ báo lỗi vì nó yêu cầu môi trường Cloudflare. Để chạy thử toàn vẹn (cả giao diện và API bộ đếm):
+
+1. Cài đặt Wrangler CLI:
+```bash
+npm install -g wrangler
+```
+2. Chạy môi trường mô phỏng Cloudflare:
+```bash
+wrangler pages dev . --kv VIETQR_KV
+```
+3. Truy cập địa chỉ `http://localhost:8788`.
 
 ## Tác giả
 

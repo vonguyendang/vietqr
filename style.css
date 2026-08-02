@@ -220,3 +220,24 @@ input:focus, select:focus {
 .site-footer p {
     margin: 5px 0;
 }
+
+.visit-counter {
+    display: inline-block;
+    background-color: var(--card-bg);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+.visit-counter i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.cf-turnstile {
+    display: flex;
+    justify-content: center;
+}
