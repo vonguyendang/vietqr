@@ -21,6 +21,10 @@ body {
   color: var(--text-color);
   margin: 0;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* --- TIÊU ĐỀ TRANG WEB --- */
@@ -83,6 +87,7 @@ body {
   max-width: 1100px;
   margin: 0 auto;
   align-items: stretch;
+  flex-grow: 1;
 }
 
 .form-column, .qr-column {
