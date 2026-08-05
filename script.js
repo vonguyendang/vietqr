@@ -1,5 +1,6 @@
 let isTurnstileValid = false;
 let isBankLoaded = false;
+let currentLang = localStorage.getItem('vietqr_lang') || 'vi';
 
 function onTurnstileSuccess(token) {
     isTurnstileValid = true;
@@ -12,23 +13,73 @@ function checkSubmitBtnState() {
     }
 }
 
-$(document).ready(function() {
+function updateLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('vietqr_lang', lang);
+    
+    // Update language switcher UI
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
+    
+    // Update text content
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (locales[lang][key]) {
+            el.innerHTML = locales[lang][key];
+        }
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (locales[lang][key]) {
+            el.placeholder = locales[lang][key];
+        }
+    });
+    
+    // Update titles
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (locales[lang][key]) {
+            el.title = locales[lang][key];
+        }
+    });
+    
+    // Update document title
+    document.title = locales[lang]['title'];
+
+    // Update select2 placeholder if it's already initialized
     const bankSelectEl = $('#bank-select');
-    const hiddenBankInput = $('#i_bank');
-    const submitBtn = $('#submitBtn');
+    if (bankSelectEl.hasClass("select2-hidden-accessible")) {
+        bankSelectEl.select2('destroy');
+        initSelect2();
+    }
+}
 
-    function formatBankOption(bank) {
-        if (!bank.id) return bank.text;
-        const logoUrl = $(bank.element).data('logo');
-        if (!logoUrl) return bank.text;
-        return $('<span><img src="' + logoUrl + '" class="bank-logo" /> ' + bank.text + '</span>');
-    };
-
-    bankSelectEl.select2({
-        placeholder: "--- Chọn hoặc tìm ngân hàng ---",
+function initSelect2() {
+    $('#bank-select').select2({
+        placeholder: locales[currentLang]['select2_placeholder'],
         templateResult: formatBankOption,
         templateSelection: formatBankOption
     });
+}
+
+function formatBankOption(bank) {
+    if (!bank.id) return bank.text;
+    const logoUrl = $(bank.element).data('logo');
+    if (!logoUrl) return bank.text;
+    return $('<span><img src="' + logoUrl + '" class="bank-logo" /> ' + bank.text + '</span>');
+};
+
+$(document).ready(function() {
+    const bankSelectEl = $('#bank-select');
+    const hiddenBankInput = $('#i_bank');
+    $('#lang-vi').click(() => updateLanguage('vi'));
+    $('#lang-en').click(() => updateLanguage('en'));
+
+    // Khởi tạo ngôn ngữ ban đầu
+    updateLanguage(currentLang);
+    initSelect2();
 
     $.ajax({
         url: "https://api.vietqr.io/v2/banks",
@@ -44,11 +95,11 @@ $(document).ready(function() {
                 const vietinbankBin = '970415';
                 bankSelectEl.val(vietinbankBin).trigger('change');
             } else {
-                bankSelectEl.append(new Option("Lỗi tải danh sách", "", true, true));
+                bankSelectEl.append(new Option(locales[currentLang]['select2_load_error'], "", true, true));
             }
         },
         error: function() {
-            bankSelectEl.append(new Option("Lỗi mạng", "", true, true));
+            bankSelectEl.append(new Option(locales[currentLang]['select2_net_error'], "", true, true));
         },
         complete: function() {
              isBankLoaded = true;
@@ -90,7 +141,7 @@ function genAndScanQR() {
     const bank = document.getElementById('i_bank').value;
     const acc = document.getElementById('i_acc').value;
     if (!bank || !acc) {
-        alert("Vui lòng chọn ngân hàng và nhập số tài khoản!");
+        alert(locales[currentLang]['alert_select_bank']);
         return;
     }
   
@@ -128,13 +179,13 @@ function genAndScanQR() {
             const idx = code.data.indexOf('6304');
             qrcEl.innerText = (idx != -1) ? code.data.substr(idx + 4, 4) : '[N/A]';
         } else {
-            qrStrEl.innerText = '[Không đọc được nội dung]';
+            qrStrEl.innerText = locales[currentLang]['qr_error_read'];
             qrcEl.innerText = '[N/A]';
         }
     }
 
     imgEl.onerror = function() {
-        alert("Tạo mã QR thất bại. Vui lòng kiểm tra lại thông tin đã nhập.");
+        alert(locales[currentLang]['alert_qr_failed']);
     }
 }
 
@@ -157,7 +208,7 @@ function copyToClipboard(textToCopy, buttonElement) {
         }, 2000);
     }).catch(err => {
         console.error('Không thể sao chép: ', err);
-        alert('Sao chép thất bại!');
+        alert(locales[currentLang]['alert_copy_failed']);
     });
 }
 
@@ -176,7 +227,7 @@ async function downloadQR() {
         document.body.removeChild(link);
         URL.revokeObjectURL(objectUrl);
     } catch (error) {
-        alert("Không thể tải ảnh.");
+        alert(locales[currentLang]['alert_download_failed']);
     }
 }
 

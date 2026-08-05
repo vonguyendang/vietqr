@@ -21,52 +21,57 @@
 <body>
 
   <header class="site-header">
-    <h1>Công cụ tạo mã VietQR</h1>
-    <p>Tạo mã QR thanh toán theo chuẩn Napas một cách nhanh chóng, an toàn và hoàn toàn miễn phí.</p>
+    <div class="lang-switcher">
+      <button id="lang-vi" class="lang-btn active">VI</button>
+      <span class="lang-divider">|</span>
+      <button id="lang-en" class="lang-btn">EN</button>
+    </div>
+    <h1 data-i18n="header_h1">Công cụ tạo mã VietQR</h1>
+    <p data-i18n="header_p">Tạo mã QR thanh toán theo chuẩn Napas một cách nhanh chóng, an toàn và hoàn toàn miễn phí.</p>
   </header>
 
   <div class="main-container">
     <div class="form-column">
       <div class="card">
         <div class="card-header">
-          <h3>Thông tin thanh toán</h3>
+          <h3 data-i18n="card_title">Thông tin thanh toán</h3>
         </div>
         <form id="vietqrForm" onsubmit="event.preventDefault(); genAndScanQR();">
           <div class="formrow">
-            <label for="bank-select" class="required">Ngân hàng:</label>
+            <label for="bank-select" class="required" data-i18n="label_bank">Ngân hàng:</label>
             <select id="bank-select" style="width: 100%;"></select>
             <input type="hidden" id="i_bank" />
           </div>
           <div class="formrow">
-            <label for="i_acc" class="required">Số tài khoản:</label>
+            <label for="i_acc" class="required" data-i18n="label_acc">Số tài khoản:</label>
             <input type="text" id="i_acc" required />
           </div>
           <div class="formrow">
-            <label for="qr-template-select">Mẫu QR:</label>
+            <label for="qr-template-select" data-i18n="label_template">Mẫu QR:</label>
             <select id="qr-template-select">
-              <option value="compact" selected>Compact (Kèm logo Napas)</option>
-              <option value="compact2">Print Compact (Thông tin gọn)</option>
-              <option value="print">Bản in (Đầy đủ thông tin)</option>
-              <option value="qr_only">Chỉ mã QR</option>
+              <option value="compact" selected data-i18n="opt_compact">Compact (Kèm logo Napas)</option>
+              <option value="compact2" data-i18n="opt_compact2">Print Compact (Thông tin gọn)</option>
+              <option value="print" data-i18n="opt_print">Bản in (Đầy đủ thông tin)</option>
+              <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR</option>
             </select>
           </div>
           <div class="formrow">
-            <label for="i_amount">Số tiền (Tùy chọn):</label>
-            <input type="number" id="i_amount" placeholder="VD: 50000" />
+            <label for="i_amount" data-i18n="label_amount">Số tiền (Tùy chọn):</label>
+            <input type="number" id="i_amount" data-i18n-placeholder="placeholder_amount" placeholder="VD: 50000" />
           </div>
           <div class="formrow">
-            <label for="i_desc">Nội dung (Tùy chọn):</label>
-            <input type="text" id="i_desc" placeholder="VD: Chuyen khoan" />
+            <label for="i_desc" data-i18n="label_desc">Nội dung (Tùy chọn):</label>
+            <input type="text" id="i_desc" data-i18n-placeholder="placeholder_desc" placeholder="VD: Chuyen khoan" />
           </div>
           <div class="formrow">
-            <label for="i_name">Tên tài khoản (Tùy chọn):</label>
-            <input type="text" id="i_name" placeholder="Tên không dấu" />
+            <label for="i_name" data-i18n="label_name">Tên tài khoản (Tùy chọn):</label>
+            <input type="text" id="i_name" data-i18n-placeholder="placeholder_name" placeholder="Tên không dấu" />
           </div>
           <!-- Cloudflare Turnstile Test Site Key (Thay thế bằng Site Key của bạn trên CF Dashboard) -->
-          <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-callback="onTurnstileSuccess" style="margin-bottom: 15px;"></div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAAEEZtudZFGl_DWL7" data-callback="onTurnstileSuccess" style="margin-bottom: 15px;"></div>
           <button id="submitBtn" type="submit" class="btn btn-primary" disabled>
             <i class="fa-solid fa-qrcode"></i>
-            Tạo mã QR
+            <span data-i18n="btn_generate"> Tạo mã QR</span>
           </button>
         </form>
       </div>
@@ -76,31 +81,31 @@
       <div class="card">
         <div id="qr-result-placeholder">
           <i class="fa-solid fa-qrcode"></i>
-          <p>Mã QR sẽ xuất hiện ở đây</p>
+          <p data-i18n="qr_placeholder">Mã QR sẽ xuất hiện ở đây</p>
         </div>
         <div id="qr-result-wrapper">
           <img id="qrimg" crossorigin="anonymous" />
           <div class="qr-info">
-            <b>Nội dung QR:</b>
+            <b data-i18n="qr_info_content">Nội dung QR:</b>
             <div class="qr-info-content">
               <span id="qrstr"></span>
-              <button id="copyQrContentBtn" class="copy-btn" title="Sao chép nội dung QR">
+              <button id="copyQrContentBtn" class="copy-btn" data-i18n-title="title_copy_content" title="Sao chép nội dung QR">
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
           </div>
           <div class="qr-info">
-            <b>Hash CRC:</b>
+            <b data-i18n="qr_info_crc">Hash CRC:</b>
             <div class="qr-info-content">
               <span id="qrc"></span>
-              <button id="copyCrcBtn" class="copy-btn" title="Sao chép Hash CRC">
+              <button id="copyCrcBtn" class="copy-btn" data-i18n-title="title_copy_crc" title="Sao chép Hash CRC">
                 <i class="fa-solid fa-copy"></i>
               </button>
             </div>
           </div>
           <button id="downloadBtn" class="btn btn-secondary">
             <i class="fa-solid fa-download"></i>
-            Tải xuống ảnh QR
+            <span data-i18n="btn_download"> Tải xuống ảnh QR</span>
           </button>
         </div>
       </div>
@@ -109,15 +114,21 @@
 
   <footer class="site-footer">
     <div class="visit-counter">
-      <i class="fa-solid fa-chart-line"></i> Tổng lượt truy cập: <span id="visitCount">Đang tải...</span>
+      <i class="fa-solid fa-chart-line"></i> <span data-i18n="visit_total">Tổng lượt truy cập: </span><span id="visitCount" data-i18n="visit_loading">Đang tải...</span>
     </div>
-    <p>Designed and developed with ❤️ by Dang Vo</p>
-    <p>© 2025 VietQR Generator. All rights reserved.</p>
+    <p data-i18n="footer_designed">Designed and developed with ❤️ by Dang Vo</p>
+    <p data-i18n="footer_copyright">© 2025 VietQR Generator. All rights reserved.</p>
+    <div class="footer-disclaimer" style="margin-top: 20px; font-size: 12px; color: #888; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+      <p data-i18n="footer_disclaimer1">Dự án đang trong giai đoạn thử nghiệm và phát triển. Công cụ tạo mã được xây dựng dựa trên việc tham khảo các tiêu chuẩn thanh toán (Napas247) và nhiều nguồn tài liệu uy tín.</p>
+      <p data-i18n="footer_disclaimer2">Website hoạt động hoàn toàn với mục đích phi thương mại, phục vụ cho nhu cầu học tập, tham khảo và tiện ích cá nhân. Chúng tôi không chịu trách nhiệm pháp lý đối với bất kỳ giao dịch tài chính hay rủi ro nào phát sinh từ việc sử dụng hệ thống này.</p>
+      <p data-i18n="footer_disclaimer3">Chúng tôi cam kết không thu thập hay lưu trữ bất kỳ thông tin cá nhân hoặc dữ liệu giao dịch nào của bạn trên máy chủ.</p>
+    </div>
   </footer>
 
   <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="locales.js"></script>
   <script src="script.js"></script>
 </body>
 
