@@ -4,15 +4,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VietQR Generator - Tạo mã QR thanh toán nhanh chóng</title>
+  <title>VietQR Payment Suite - Bộ công cụ Napas247, SVG Quicklink, Decoder, Parser & Tra cứu</title>
   <link rel="shortcut icon" href="favicon_io/android-chrome-512x512.png" type="image/x-icon">
+  
+  <!-- CSS Dependencies -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
   <link rel="stylesheet" href="style.css">
+
+  <!-- Cloudflare Turnstile & Google AdSense -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7233790992400404"
      crossorigin="anonymous"></script>
@@ -20,114 +23,890 @@
 
 <body>
 
-  <header class="site-header">
-    <div class="lang-switcher">
-      <button id="lang-vi" class="lang-btn active">VI</button>
-      <span class="lang-divider">|</span>
-      <button id="lang-en" class="lang-btn">EN</button>
-    </div>
-    <h1 data-i18n="header_h1">Công cụ tạo mã VietQR</h1>
-    <p data-i18n="header_p">Tạo mã QR thanh toán theo chuẩn Napas một cách nhanh chóng, an toàn và hoàn toàn miễn phí.</p>
-  </header>
+  <!-- NAPAS / VIETQR TOP GRADIENT BAR -->
+  <div class="napas-brand-bar"></div>
 
-  <div class="main-container">
-    <div class="form-column">
-      <div class="card">
-        <div class="card-header">
-          <h3 data-i18n="card_title">Thông tin thanh toán</h3>
+  <!-- ANNOUNCEMENT BANNER -->
+  <div id="announcementBar" class="announcement-bar">
+    <span class="announcement-badge" data-i18n="banner_badge">Cập nhật 10/2026</span>
+    <div class="announcement-content">
+      <span data-i18n="banner_text">VietQR chuyển đổi engine Quicklink sang SVG-First, Serverless (nhanh gấp 5 lần), bổ sung template LoaX & lộ trình offline vietqr-core.</span>
+      <button id="openUpdateModalBtn" class="announcement-link" type="button">
+        <span data-i18n="banner_link">Chi tiết cập nhật</span> <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+    <button id="closeAnnouncementBtn" class="announcement-close" title="Đóng thông báo" aria-label="Đóng thông báo">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- SITE HEADER -->
+  <header class="site-header">
+    <div class="header-top">
+      <a href="#" class="brand-wrapper">
+        <div class="brand-icon">
+          <i class="fa-solid fa-qrcode"></i>
         </div>
-        <form id="vietqrForm" onsubmit="event.preventDefault(); genAndScanQR();">
-          <div class="formrow">
-            <label for="bank-select" class="required" data-i18n="label_bank">Ngân hàng:</label>
-            <select id="bank-select" style="width: 100%;"></select>
-            <input type="hidden" id="i_bank" />
-          </div>
-          <div class="formrow">
-            <label for="i_acc" class="required" data-i18n="label_acc">Số tài khoản:</label>
-            <input type="text" id="i_acc" required />
-          </div>
-          <div class="formrow">
-            <label for="qr-template-select" data-i18n="label_template">Mẫu QR:</label>
-            <select id="qr-template-select">
-              <option value="compact" selected data-i18n="opt_compact">Compact (Kèm logo Napas)</option>
-              <option value="compact2" data-i18n="opt_compact2">Print Compact (Thông tin gọn)</option>
-              <option value="print" data-i18n="opt_print">Bản in (Đầy đủ thông tin)</option>
-              <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR</option>
-            </select>
-          </div>
-          <div class="formrow">
-            <label for="i_amount" data-i18n="label_amount">Số tiền (Tùy chọn):</label>
-            <input type="number" id="i_amount" data-i18n-placeholder="placeholder_amount" placeholder="VD: 50000" />
-          </div>
-          <div class="formrow">
-            <label for="i_desc" data-i18n="label_desc">Nội dung (Tùy chọn):</label>
-            <input type="text" id="i_desc" data-i18n-placeholder="placeholder_desc" placeholder="VD: Chuyen khoan" />
-          </div>
-          <div class="formrow">
-            <label for="i_name" data-i18n="label_name">Tên tài khoản (Tùy chọn):</label>
-            <input type="text" id="i_name" data-i18n-placeholder="placeholder_name" placeholder="Tên không dấu" />
-          </div>
-          <!-- Cloudflare Turnstile Test Site Key (Thay thế bằng Site Key của bạn trên CF Dashboard) -->
-          <div class="cf-turnstile" data-sitekey="0x4AAAAAAEEZtudZFGl_DWL7" data-callback="onTurnstileSuccess" style="margin-bottom: 15px;"></div>
-          <button id="submitBtn" type="submit" class="btn btn-primary" disabled>
-            <i class="fa-solid fa-qrcode"></i>
-            <span data-i18n="btn_generate"> Tạo mã QR</span>
-          </button>
-        </form>
+        <div class="brand-title">
+          VietQR <span>Kit</span>
+          <span class="suite-badge" data-i18n="header_badge">PRO Suite</span>
+        </div>
+      </a>
+      <div class="lang-switcher">
+        <button id="lang-vi" class="lang-btn active" type="button">VI</button>
+        <button id="lang-en" class="lang-btn" type="button">EN</button>
       </div>
     </div>
+    <div class="header-lead">
+      <h1 data-i18n="header_h1">VietQR Payment Suite & Core</h1>
+      <p data-i18n="header_p">Nền tảng tạo mã VietQR SVG-First, Giải mã ảnh QR, Phân tích chuỗi EMVCo TLV, Bank Deeplink, Tra cứu 76+ Ngân hàng, STK & Mã số thuế.</p>
+      
+      <div class="quick-stats-chips">
+        <span class="stat-chip"><i class="fa-solid fa-bolt"></i> SVG-First 100ms</span>
+        <span class="stat-chip"><i class="fa-solid fa-building-columns"></i> 76+ Ngân Hàng</span>
+        <span class="stat-chip"><i class="fa-solid fa-mobile-screen"></i> 35+ App Deeplink</span>
+        <span class="stat-chip"><i class="fa-solid fa-shield-halved"></i> EMVCo Napas247</span>
+        <span class="stat-chip"><i class="fa-solid fa-paste"></i> Dán ảnh Ctrl+V</span>
+      </div>
+    </div>
+  </header>
 
-    <div class="qr-column">
-      <div class="card">
-        <div id="qr-result-placeholder">
-          <i class="fa-solid fa-qrcode"></i>
-          <p data-i18n="qr_placeholder">Mã QR sẽ xuất hiện ở đây</p>
+  <!-- NAVIGATION TABS -->
+  <div class="nav-tabs-wrapper">
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-qr" type="button">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span data-i18n="tab_qr">Tạo QR Động</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-decoder" type="button">
+        <i class="fa-solid fa-expand"></i>
+        <span data-i18n="tab_decoder">Giải Mã QR</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-parser" type="button">
+        <i class="fa-solid fa-sitemap"></i>
+        <span data-i18n="tab_parser">Phân Tích EMVCo</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-deeplink" type="button">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+        <span data-i18n="tab_deeplink">Bank Deeplink</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-bank" type="button">
+        <i class="fa-solid fa-building-columns"></i>
+        <span data-i18n="tab_bank">Tra Cứu Ngân Hàng</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-stk" type="button">
+        <i class="fa-solid fa-user-check"></i>
+        <span data-i18n="tab_stk">Tra Cứu STK</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-mst" type="button">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span data-i18n="tab_mst">Tra Cứu Mã Số Thuế</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-developer" type="button">
+        <i class="fa-solid fa-code"></i>
+        <span data-i18n="tab_developer">Mã Nguồn & SDK</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- MAIN TAB CONTENT CONTAINER -->
+  <main class="main-content">
+
+    <!-- =========================================================================
+         TAB 1: TẠO QR ĐỘNG (SVG FIRST)
+         ========================================================================= -->
+    <section id="tab-qr" class="tab-panel active">
+      <div class="two-column-layout">
+        <!-- Form Column -->
+        <div class="form-column">
+          <div class="card">
+            <div class="card-title-bar">
+              <h3><i class="fa-solid fa-credit-card"></i> <span data-i18n="card_title">Thông tin thanh toán</span></h3>
+              <span class="format-badge"><i class="fa-solid fa-bolt"></i> SVG-First Engine</span>
+            </div>
+            <form id="vietqrForm" onsubmit="event.preventDefault(); genAndScanQR();">
+              <div class="form-grid">
+                <div class="formrow">
+                  <label for="bank-select" class="required" data-i18n="label_bank">Ngân hàng thụ hưởng:</label>
+                  <select id="bank-select" style="width: 100%;"></select>
+                  <input type="hidden" id="i_bank" />
+                </div>
+
+                <div class="formrow">
+                  <label for="i_acc" class="required" data-i18n="label_acc">Số tài khoản / Alias:</label>
+                  <input type="text" id="i_acc" required placeholder="Nhập số tài khoản hoặc Alias, Nickname" autocomplete="off" />
+                </div>
+
+                <div class="formrow two-cols">
+                  <div>
+                    <label for="qr-template-select" data-i18n="label_template">Mẫu giao diện (Template):</label>
+                    <select id="qr-template-select">
+                      <option value="compact" selected data-i18n="opt_compact">Compact (540x540 - Logo Napas & Bank)</option>
+                      <option value="compact2" data-i18n="opt_compact2">Print Compact (540x640 - Khung thông tin)</option>
+                      <option value="print" data-i18n="opt_print">Bản in (600x776 - Đầy đủ chi tiết hóa đơn)</option>
+                      <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR (480x480 - Tối giản)</option>
+                      <option value="loax" data-i18n="opt_loax">LoaX (2583x3719 - Loa thông báo chuyển khoản)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="qr-format-select" data-i18n="label_format">Định dạng ảnh xuất ra:</label>
+                    <select id="qr-format-select">
+                      <option value="svg" selected data-i18n="opt_svg">SVG (Vector siêu nét - Khuyên dùng)</option>
+                      <option value="png" data-i18n="opt_png">PNG (Ảnh raster)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="formrow">
+                  <label for="i_amount">
+                    <span data-i18n="label_amount">Số tiền (Tùy chọn, VNĐ):</span>
+                    <span id="amountFormattedPreview" class="label-hint" style="color: var(--brand-green); font-weight: 600;"></span>
+                  </label>
+                  <input type="number" id="i_amount" min="0" max="9999999999999" data-i18n-placeholder="placeholder_amount" placeholder="VD: 50000" />
+                </div>
+
+                <div class="formrow">
+                  <label for="i_desc" data-i18n="label_desc">Nội dung chuyển khoản (Tùy chọn):</label>
+                  <input type="text" id="i_desc" maxlength="50" data-i18n-placeholder="placeholder_desc" placeholder="VD: Ung ho quy vac xin (tối đa 50 ký tự)" />
+                </div>
+
+                <div class="formrow">
+                  <label for="i_name" data-i18n="label_name">Tên chủ tài khoản (Tùy chọn):</label>
+                  <input type="text" id="i_name" data-i18n-placeholder="placeholder_name" placeholder="Tên in hoa không dấu (VD: NGUYEN VAN A)" />
+                </div>
+
+                <!-- Cloudflare Turnstile -->
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAEEZtudZFGl_DWL7" data-callback="onTurnstileSuccess" style="margin-top: 5px;"></div>
+
+                <button id="submitBtn" type="submit" class="btn btn-primary btn-lg btn-block" disabled>
+                  <i class="fa-solid fa-qrcode"></i>
+                  <span data-i18n="btn_generate">Tạo mã VietQR</span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div id="qr-result-wrapper">
-          <img id="qrimg" crossorigin="anonymous" />
-          <div class="qr-info">
-            <b data-i18n="qr_info_content">Nội dung QR:</b>
-            <div class="qr-info-content">
-              <span id="qrstr"></span>
-              <button id="copyQrContentBtn" class="copy-btn" data-i18n-title="title_copy_content" title="Sao chép nội dung QR">
-                <i class="fa-solid fa-copy"></i>
-              </button>
+
+        <!-- Result Column -->
+        <div class="qr-column">
+          <div class="card">
+            <div id="qr-result-placeholder">
+              <i class="fa-solid fa-qrcode"></i>
+              <p data-i18n="qr_placeholder">Mã VietQR sẽ hiển thị sắc nét tại đây sau khi bạn tạo</p>
+            </div>
+
+            <div id="qr-result-wrapper">
+              <div class="qr-image-container">
+                <img id="qrimg" crossorigin="anonymous" alt="Mã VietQR Thanh toán" />
+              </div>
+
+              <!-- Quick Action Buttons -->
+              <div class="qr-actions-grid">
+                <button id="downloadSvgBtn" class="btn btn-primary" type="button">
+                  <i class="fa-solid fa-file-code"></i>
+                  <span data-i18n="btn_download_svg">Tải file SVG</span>
+                </button>
+                <button id="downloadPngBtn" class="btn btn-secondary" type="button">
+                  <i class="fa-solid fa-image"></i>
+                  <span data-i18n="btn_download_png">Tải ảnh PNG</span>
+                </button>
+                <button id="copyImageBtn" class="btn btn-secondary" type="button">
+                  <i class="fa-solid fa-copy"></i>
+                  <span data-i18n="btn_copy_image">Sao chép ảnh</span>
+                </button>
+                <button id="copyQuicklinkBtn" class="btn btn-secondary" type="button">
+                  <i class="fa-solid fa-link"></i>
+                  <span data-i18n="btn_copy_link">Sao chép Quicklink</span>
+                </button>
+                <button id="goToDeeplinkBtn" class="btn btn-success btn-full" type="button">
+                  <i class="fa-solid fa-mobile-screen-button"></i>
+                  <span data-i18n="btn_open_deeplink">Mở App Ngân hàng (Deeplink)</span>
+                </button>
+              </div>
+
+              <!-- Specs Box -->
+              <div class="qr-specs-box">
+                <div class="qr-spec-row">
+                  <b data-i18n="qr_spec_bin">Mã BIN:</b>
+                  <span id="specBinDisplay">-</span>
+                </div>
+                <div class="qr-spec-row">
+                  <b data-i18n="qr_spec_acc">Số TK:</b>
+                  <span id="specAccDisplay">-</span>
+                </div>
+                <div class="qr-spec-row">
+                  <b data-i18n="qr_spec_amount">Số tiền:</b>
+                  <span id="specAmountDisplay">-</span>
+                </div>
+                <div class="qr-spec-row">
+                  <b data-i18n="qr_spec_desc">Nội dung:</b>
+                  <span id="specDescDisplay">-</span>
+                </div>
+                <div class="qr-spec-row">
+                  <b data-i18n="qr_info_crc">Hash CRC-16:</b>
+                  <span id="qrc" class="mono" style="color: var(--primary); font-weight: 700;">-</span>
+                </div>
+              </div>
+
+              <!-- Raw EMVCo payload -->
+              <div class="raw-payload-card">
+                <div class="raw-payload-header">
+                  <span data-i18n="qr_info_content">Chuỗi mã hóa VietQR (EMVCo Tag):</span>
+                  <button id="copyQrContentBtn" class="copy-mini-btn" type="button">Copy</button>
+                </div>
+                <div id="qrstr" class="raw-payload-text"></div>
+              </div>
             </div>
           </div>
-          <div class="qr-info">
-            <b data-i18n="qr_info_crc">Hash CRC:</b>
-            <div class="qr-info-content">
-              <span id="qrc"></span>
-              <button id="copyCrcBtn" class="copy-btn" data-i18n-title="title_copy_crc" title="Sao chép Hash CRC">
-                <i class="fa-solid fa-copy"></i>
-              </button>
-            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: GIẢI MÃ QR (QR DECODER) - MỚI!
+         ========================================================================= -->
+    <section id="tab-decoder" class="tab-panel">
+      <div class="card lookup-container">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-expand"></i> <span data-i18n="decoder_title">Giải Mã & Đọc Dữ Liệu VietQR Từ Hình Ảnh</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="decoder_desc">Tải lên tệp ảnh, kéo thả, bật camera hoặc dán ảnh chụp màn hình (Ctrl / Cmd + V) để trích xuất tức thì thông tin thanh toán.</p>
           </div>
-          <button id="downloadBtn" class="btn btn-secondary">
-            <i class="fa-solid fa-download"></i>
-            <span data-i18n="btn_download"> Tải xuống ảnh QR</span>
+          <button id="toggleCameraBtn" class="btn btn-outline-primary btn-sm" type="button">
+            <i class="fa-solid fa-camera"></i> <span data-i18n="decoder_btn_camera">Bật Camera Quét Trực Tiếp</span>
           </button>
         </div>
+
+        <!-- Camera Scanner Preview -->
+        <div id="cameraPreviewContainer" class="camera-preview-container">
+          <video id="cameraVideo" playsinline></video>
+          <div class="camera-scan-overlay"></div>
+        </div>
+
+        <!-- Drop Zone -->
+        <div id="dropZone" class="drop-zone">
+          <i class="fa-solid fa-cloud-arrow-up drop-zone-icon"></i>
+          <div class="drop-zone-title" data-i18n="decoder_drop_title">Kéo thả ảnh QR vào đây hoặc bấm để chọn tệp</div>
+          <div class="drop-zone-hint" data-i18n="decoder_drop_hint">Hỗ trợ PNG, JPEG, SVG, WebP, BMP. Hoặc dán ảnh trực tiếp từ bộ nhớ tạm (Ctrl+V)</div>
+          <input type="file" id="qrFileInput" accept="image/*" style="display: none;" />
+        </div>
+
+        <!-- Decoding status indicator -->
+        <div id="decodeStatus" class="decode-status-bar">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <span data-i18n="decoder_status_decoding">Đang phân tích hình ảnh và giải mã...</span>
+        </div>
+
+        <!-- Decoder Result Card -->
+        <div id="decodeResultCard" class="result-card">
+          <div class="result-header">
+            <div class="result-header-title">
+              <i class="fa-solid fa-circle-check" style="color: var(--brand-green);"></i>
+              <span data-i18n="decoder_result_title">Thông tin thanh toán bóc tách từ ảnh:</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <span id="decCrcBadge" class="suite-badge">CRC16 Hợp lệ</span>
+              <span id="decQrTypeBadge" class="suite-badge" style="background: var(--bg-subtle); color: var(--text-main);">Mã động</span>
+            </div>
+          </div>
+
+          <div class="decode-result-grid">
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_bank">Ngân hàng thụ hưởng:</dt>
+              <dd id="decBankName">—</dd>
+            </div>
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_acc">Số tài khoản / thẻ:</dt>
+              <dd id="decAccountNo" class="mono" style="color: var(--primary);">—</dd>
+            </div>
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_amount">Số tiền thanh toán:</dt>
+              <dd id="decAmount" style="color: var(--brand-green);">—</dd>
+            </div>
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_desc">Nội dung chuyển khoản:</dt>
+              <dd id="decDesc">—</dd>
+            </div>
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_service">Hình thức giao dịch:</dt>
+              <dd id="decServiceType">—</dd>
+            </div>
+            <div class="decode-result-item">
+              <dt data-i18n="decoder_col_order">Mã đơn hàng (Tag 62.01):</dt>
+              <dd id="decBillNumber" class="mono">—</dd>
+            </div>
+          </div>
+
+          <div class="raw-payload-card">
+            <div class="raw-payload-header">
+              <span data-i18n="decoder_col_raw">Chuỗi dữ liệu EMVCo thô:</span>
+              <button id="copyDecRawBtn" class="copy-mini-btn" type="button">Copy</button>
+            </div>
+            <div id="decRawPayload" class="raw-payload-text"></div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
+            <button id="decRecreateQrBtn" class="btn btn-primary" style="flex: 1;" type="button">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span data-i18n="decoder_btn_recreate">Tạo lại mã VietQR từ ảnh này</span>
+            </button>
+            <button id="decOpenDeeplinkBtn" class="btn btn-success" style="flex: 1;" type="button">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              <span data-i18n="decoder_btn_open_app">Mở App thanh toán ngay</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: PHÂN TÍCH EMVCo TLV (TLV PARSER) - MỚI!
+         ========================================================================= -->
+    <section id="tab-parser" class="tab-panel">
+      <div class="card lookup-container">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-sitemap"></i> <span data-i18n="parser_title">Phân Tích Cú Pháp Chuỗi EMVCo TLV & Kiểm Tra CRC-16</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="parser_desc">Dán chuỗi ký tự VietQR chuẩn Napas247 (bắt đầu bằng 000201...) để bóc tách cấu trúc từng Tag (Tag-Length-Value) và kiểm tra tính toàn vẹn.</p>
+          </div>
+          <button id="parserPasteSampleBtn" class="btn btn-secondary btn-sm" type="button">
+            <i class="fa-solid fa-paste"></i> <span data-i18n="parser_sample_btn">Dán chuỗi mẫu thử</span>
+          </button>
+        </div>
+
+        <form id="parserForm" onsubmit="event.preventDefault(); handleParseEmvco();">
+          <div class="formrow" style="margin-bottom: 16px;">
+            <label for="parserInput" data-i18n="parser_input_label">Chuỗi mã thanh toán VietQR:</label>
+            <textarea id="parserInput" rows="3" class="mono" data-i18n-placeholder="parser_input_placeholder" placeholder="Dán chuỗi VietQR bắt đầu bằng 000201... vào đây"></textarea>
+          </div>
+          <button id="parseSubmitBtn" type="submit" class="btn btn-primary btn-lg btn-block">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span data-i18n="parser_btn_parse">Phân tích cú pháp</span>
+          </button>
+        </form>
+
+        <!-- Parser Results -->
+        <div id="parserResultContainer" style="display: none; margin-top: 24px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;" id="parserChipsContainer">
+            <!-- Chips rendered by JS -->
+          </div>
+
+          <!-- TLV Tag Table -->
+          <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 8px;" data-i18n="parser_tags_title">Cấu trúc dữ liệu theo từng Tag (TLV)</h4>
+            <div class="apps-table-container">
+              <table class="tlv-table">
+                <thead>
+                  <tr>
+                    <th>Tag</th>
+                    <th>Tên trường (Field Name)</th>
+                    <th>Độ dài</th>
+                    <th>Nội dung giải mã (Value)</th>
+                  </tr>
+                </thead>
+                <tbody id="tlvTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Parsed JSON Viewer -->
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="font-size: 15px; font-weight: 700;" data-i18n="parser_json_title">Dữ liệu JSON sau khi bóc tách</h4>
+              <button id="copyParsedJsonBtn" class="copy-mini-btn" type="button" style="background: var(--bg-hover); color: var(--text-main);">Copy JSON</button>
+            </div>
+            <pre id="parsedJsonCode" class="json-code-box"></pre>
+          </div>
+
+          <button id="parserRecreateQrBtn" class="btn btn-success btn-block" type="button">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span data-i18n="parser_btn_recreate">Sử dụng dữ liệu này để tạo QR mới</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: BANK DEEPLINK
+         ========================================================================= -->
+    <section id="tab-deeplink" class="tab-panel">
+      <div class="card">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-mobile-screen-button"></i> <span data-i18n="deeplink_title">Tạo Bank Deeplink Mở App</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="deeplink_desc">Tạo liên kết mở thẳng ứng dụng ngân hàng hoặc ví điện tử trên điện thoại với thông tin thanh toán điền sẵn.</p>
+          </div>
+          <div class="filter-pills">
+            <button id="platformAndroidBtn" class="filter-pill active" type="button"><i class="fa-brands fa-android"></i> Android</button>
+            <button id="platformIosBtn" class="filter-pill" type="button"><i class="fa-brands fa-apple"></i> iOS</button>
+          </div>
+        </div>
+
+        <!-- Interactive sentence / form -->
+        <div class="deeplink-demo-box">
+          <div class="deeplink-interactive-sentence">
+            Mở App
+            <select id="deeplinkAppSelect"></select>
+            để thanh toán số tiền
+            <input type="number" id="deeplinkAmount" value="50000" min="0" placeholder="Số tiền" /> VNĐ
+            với nội dung
+            <input type="text" id="deeplinkDesc" value="Thanh toan don hang" placeholder="Nội dung" />
+            tới số tài khoản
+            <input type="text" id="deeplinkAcc" value="113366668888" placeholder="Số TK nhận" />
+            tại ngân hàng
+            <select id="deeplinkBankSelect"></select>.
+          </div>
+        </div>
+
+        <div class="deeplink-output-container">
+          <div class="deeplink-url-box">
+            <div>
+              <label style="margin-bottom: 8px;">Đường dẫn Deeplink tạo ra:</label>
+              <div class="raw-payload-card" style="margin-bottom: 16px;">
+                <div class="raw-payload-header">
+                  <span>dl.vietqr.io/pay</span>
+                  <button id="copyDeeplinkUrlBtn" class="copy-mini-btn" type="button">Copy Link</button>
+                </div>
+                <div id="deeplinkUrlText" class="raw-payload-text"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <a id="openAppDirectBtn" href="#" target="_blank" class="btn btn-success btn-lg" style="flex: 1;">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <span data-i18n="deeplink_btn_open">Mở App Ngân Hàng Thanh Toán</span>
+              </a>
+              <button id="copyDeeplinkBtn2" class="btn btn-secondary btn-lg" type="button">
+                <i class="fa-solid fa-copy"></i>
+                <span data-i18n="deeplink_copy_url">Sao chép Deeplink</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="deeplink-qr-box">
+            <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;" data-i18n="deeplink_qr_title">Quét mã để mở App trên điện thoại</h4>
+            <div id="deeplinkQrCanvas"></div>
+            <p style="font-size: 12px; color: var(--text-muted);" data-i18n="deeplink_qr_desc">Dùng camera điện thoại hoặc Zalo để quét mã QR Deeplink này để mở app ngân hàng tự điền.</p>
+          </div>
+        </div>
+
+        <!-- Supported apps directory table -->
+        <div style="margin-top: 36px;">
+          <h4 style="font-size: 17px; font-weight: 700; margin-bottom: 14px;" data-i18n="deeplink_apps_table_title">Danh mục 35+ Ứng dụng hỗ trợ Deeplink</h4>
+          <div class="apps-table-container">
+            <table class="apps-table">
+              <thead>
+                <tr>
+                  <th>Ứng dụng</th>
+                  <th>Ngân hàng</th>
+                  <th>Mã App (appId)</th>
+                  <th>Tự điền (Autofill)</th>
+                  <th>Lượt tải / tháng</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="deeplinkAppsTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: DANH SÁCH NGÂN HÀNG (API BANK)
+         ========================================================================= -->
+    <section id="tab-bank" class="tab-panel">
+      <div class="card">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-building-columns"></i> <span data-i18n="bank_title">Danh mục 76+ Ngân hàng Việt Nam</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="bank_desc">Tra cứu mã định danh BIN, tên viết tắt, mã Swift Code và trạng thái hỗ trợ VietQR Napas247.</p>
+          </div>
+          <span id="bankCountBadge" class="suite-badge">76 Ngân hàng</span>
+        </div>
+
+        <div class="bank-toolbar">
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="bankSearchInput" data-i18n-placeholder="bank_search_placeholder" placeholder="Tìm kiếm theo tên ngân hàng, viết tắt (VCB, TCB, MB...), mã BIN, Swift Code..." />
+            <button id="bankSearchClear" class="search-clear-btn" type="button"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="filter-pills">
+            <button class="filter-pill active" data-filter="all" type="button" data-i18n="bank_filter_all">Tất cả</button>
+            <button class="filter-pill" data-filter="transfer" type="button" data-i18n="bank_filter_transfer">Hỗ trợ VietQR</button>
+            <button class="filter-pill" data-filter="lookup" type="button" data-i18n="bank_filter_lookup">Hỗ trợ Tra cứu STK</button>
+          </div>
+        </div>
+
+        <div id="bankGrid" class="bank-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Developer Documentation Snippet -->
+        <div class="info-banner" style="margin-top: 30px;">
+          <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--text-main);" data-i18n="bank_dev_title">Đặc tả API Ngân hàng cho Nhà phát triển</h4>
+          <p style="margin-bottom: 10px;">Lấy danh sách ngân hàng thời gian thực qua giao thức REST API:</p>
+          <div class="raw-payload-card" style="margin-bottom: 0;">
+            <div class="raw-payload-header">
+              <span>GET https://api.vietqr.io/v2/banks</span>
+              <button id="copyBankCurlBtn" class="copy-mini-btn" type="button">Copy cURL</button>
+            </div>
+            <div class="raw-payload-text">curl -X GET "https://api.vietqr.io/v2/banks"</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 6: TRA CỨU SỐ TÀI KHOẢN (TRA CỨU STK)
+         ========================================================================= -->
+    <section id="tab-stk" class="tab-panel">
+      <div class="card lookup-container">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-user-check"></i> <span data-i18n="stk_title">Tra cứu & Xác thực Số Tài Khoản</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="stk_desc">Kiểm tra tính hợp lệ của số tài khoản ngân hàng và truy xuất tên chủ thẻ thụ hưởng.</p>
+          </div>
+        </div>
+
+        <form id="stkLookupForm" onsubmit="event.preventDefault(); handleLookupStk();">
+          <div class="form-grid">
+            <div class="formrow">
+              <label for="stk-bank-select" class="required" data-i18n="stk_bank_label">Ngân hàng thụ hưởng:</label>
+              <select id="stk-bank-select" style="width: 100%;"></select>
+            </div>
+
+            <div class="formrow">
+              <label for="stk-acc-input" class="required" data-i18n="stk_acc_label">Số tài khoản thụ hưởng:</label>
+              <input type="text" id="stk-acc-input" required data-i18n-placeholder="stk_acc_placeholder" placeholder="Nhập từ 6 đến 19 chữ số hoặc alias..." />
+            </div>
+
+            <!-- Optional API credentials -->
+            <div>
+              <button id="toggleStkAuthBtn" class="accordion-toggle" type="button">
+                <i class="fa-solid fa-chevron-right"></i>
+                <span data-i18n="stk_auth_toggle">⚙️ Cấu hình API Key (Tùy chọn dành cho Doanh nghiệp)</span>
+              </button>
+              <div id="stkAuthContent" class="accordion-content">
+                <div class="formrow" style="margin-bottom: 12px;">
+                  <label for="stk-client-id" data-i18n="stk_client_id">x-client-id (Lấy từ my.vietqr.io):</label>
+                  <input type="text" id="stk-client-id" placeholder="VD: casso_client_id_..." />
+                </div>
+                <div class="formrow">
+                  <label for="stk-api-key" data-i18n="stk_api_key">x-api-key:</label>
+                  <input type="password" id="stk-api-key" placeholder="VD: casso_api_key_..." />
+                </div>
+              </div>
+            </div>
+
+            <button id="stkLookupSubmitBtn" type="submit" class="btn btn-primary btn-lg btn-block">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span data-i18n="stk_btn_check">Tra cứu Tài khoản</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- STK Result Card -->
+        <div id="stkResultCard" class="result-card">
+          <div class="result-header">
+            <div class="result-header-title">
+              <i class="fa-solid fa-circle-check" style="color: var(--brand-green);"></i>
+              <span data-i18n="stk_result_title">Kết quả tra cứu tài khoản</span>
+            </div>
+            <span id="stkBadgeStatus" class="suite-badge">Hợp lệ</span>
+          </div>
+
+          <div class="result-field">
+            <div class="result-field-label" data-i18n="stk_owner_label">Tên chủ tài khoản:</div>
+            <div id="stkOwnerName" class="result-field-value highlight-name">NGUYEN VAN A</div>
+          </div>
+
+          <div class="result-field">
+            <div class="result-field-label">Ngân hàng & Số tài khoản:</div>
+            <div id="stkBankAndAcc" class="result-field-value">Vietcombank - 113366668888</div>
+          </div>
+
+          <button id="stkMakeQrBtn" class="btn btn-success btn-block" style="margin-top: 16px;" type="button">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span data-i18n="stk_btn_make_qr">Tạo ngay mã VietQR cho tài khoản này</span>
+          </button>
+        </div>
+
+        <div class="info-banner">
+          <i class="fa-solid fa-info-circle"></i>
+          <span data-i18n="stk_notice_migration">Dịch vụ tra cứu STK trực tiếp từ VietQR đang thực hiện chuyển dịch sang bộ API Cas Pay Out nhằm tuân thủ quy chuẩn Open Banking của Ngân hàng Nhà nước.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 7: TRA CỨU MÃ SỐ THUẾ (TRA CỨU MST)
+         ========================================================================= -->
+    <section id="tab-mst" class="tab-panel">
+      <div class="card lookup-container">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="mst_title">Tra cứu Doanh nghiệp qua Mã Số Thuế</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="mst_desc">Truy vấn thông tin pháp nhân doanh nghiệp chính xác từ cơ sở dữ liệu quốc gia phục vụ xuất hóa đơn và lập hồ sơ thanh toán.</p>
+          </div>
+        </div>
+
+        <form id="mstLookupForm" onsubmit="event.preventDefault(); handleLookupMst();">
+          <div class="form-grid">
+            <div class="formrow">
+              <label for="mst-input" class="required" data-i18n="mst_input_label">Nhập Mã số thuế (MST) 10 hoặc 13 số:</label>
+              <div class="input-with-button">
+                <input type="text" id="mst-input" required maxlength="14" data-i18n-placeholder="mst_input_placeholder" placeholder="VD: 0100109106, 0316794479, 0101248141..." autocomplete="off" />
+                <button id="mstSearchBtn" type="submit" class="btn btn-primary">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <span data-i18n="mst_btn_search">Tra cứu</span>
+                </button>
+              </div>
+
+              <!-- Quick suggestions -->
+              <div class="quick-sample-chips">
+                <span data-i18n="mst_quick_samples">Ví dụ mẫu:</span>
+                <span class="sample-chip" data-mst="0100109106">Viettel (0100109106)</span>
+                <span class="sample-chip" data-mst="0316794479">Casso (0316794479)</span>
+                <span class="sample-chip" data-mst="0101248141">FPT (0101248141)</span>
+                <span class="sample-chip" data-mst="0101202236">Vingroup (0101202236)</span>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- MST Result Card -->
+        <div id="mstResultCard" class="result-card">
+          <div class="result-header">
+            <div class="result-header-title">
+              <i class="fa-solid fa-building" style="color: var(--primary);"></i>
+              <span id="mstCompanyName" style="font-size: 17px;">TẬP ĐOÀN CÔNG NGHIỆP - VIỄN THÔNG QUÂN ĐỘI</span>
+            </div>
+            <span id="mstStatusBadge" class="suite-badge" style="background: var(--badge-green-bg); color: var(--badge-green-text);">NNT đang hoạt động</span>
+          </div>
+
+          <div class="result-field">
+            <div class="result-field-label" data-i18n="mst_result_tax_id">Mã số thuế:</div>
+            <div id="mstTaxId" class="result-field-value mono" style="color: var(--primary); font-size: 18px;">0100109106</div>
+          </div>
+
+          <div class="result-field">
+            <div class="result-field-label" data-i18n="mst_result_address">Địa chỉ đăng ký kinh doanh:</div>
+            <div id="mstAddress" class="result-field-value" style="font-weight: 500; font-size: 14.5px;">Số 5, Phố Nguyễn Hữu An, Phường Cầu Giấy, TP Hà Nội</div>
+          </div>
+
+          <div class="result-field" id="mstIntlRow" style="display: none;">
+            <div class="result-field-label" data-i18n="mst_result_intl">Tên quốc tế:</div>
+            <div id="mstIntlName" class="result-field-value" style="font-weight: 500; font-size: 14px;"></div>
+          </div>
+
+          <div class="result-field">
+            <div class="result-field-label" data-i18n="mst_result_updated">Nguồn dữ liệu & Cập nhật:</div>
+            <div id="mstUpdatedInfo" style="font-size: 12.5px; color: var(--text-muted);">Cục Thuế - Cập nhật 5 ngày trước</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+            <button id="mstCopyInvoiceBtn" class="btn btn-secondary" style="flex: 1;" type="button">
+              <i class="fa-solid fa-copy"></i>
+              <span data-i18n="mst_btn_copy_invoice">Sao chép thông tin xuất hóa đơn</span>
+            </button>
+            <button id="mstMakeQrBtn" class="btn btn-success" style="flex: 1;" type="button">
+              <i class="fa-solid fa-qrcode"></i>
+              <span data-i18n="mst_btn_make_qr">Tạo VietQR cho DN</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="info-banner warning">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span data-i18n="mst_notice_xinvoice">Lưu ý chuyển đổi: Dịch vụ tra cứu MST trên VietQR sẽ chuyển sang Xinvoice (xinvoice.vn) từ 01/03/2027 để tăng tốc độ và bảo đảm chất lượng dữ liệu.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 8: MÃ NGUỒN & SDK (DEVELOPER SDK CODE GENERATOR) - MỚI!
+         ========================================================================= -->
+    <section id="tab-developer" class="tab-panel">
+      <div class="card">
+        <div class="card-title-bar">
+          <div>
+            <h3><i class="fa-solid fa-code"></i> <span data-i18n="dev_title">Mã Nguồn Mẫu & Hướng Dẫn Tích Hợp Đa Ngôn Ngữ</span></h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="dev_desc">Tích hợp tạo mã VietQR Quicklink SVG, sinh chuỗi EMVCo và mở Bank Deeplink trong dự án phần mềm của bạn.</p>
+          </div>
+          <button id="copyDevSnippetBtn" class="btn btn-primary btn-sm" type="button">
+            <i class="fa-solid fa-copy"></i> Sao chép mã nguồn
+          </button>
+        </div>
+
+        <!-- Language Tabs -->
+        <div class="dev-lang-tabs">
+          <button class="dev-lang-btn active" data-lang="curl" type="button">cURL</button>
+          <button class="dev-lang-btn" data-lang="js" type="button">Node.js / JS</button>
+          <button class="dev-lang-btn" data-lang="csharp" type="button">C# (.NET)</button>
+          <button class="dev-lang-btn" data-lang="python" type="button">Python</button>
+          <button class="dev-lang-btn" data-lang="php" type="button">PHP</button>
+          <button class="dev-lang-btn" data-lang="java" type="button">Java</button>
+          <button class="dev-lang-btn" data-lang="go" type="button">Go</button>
+        </div>
+
+        <!-- Code Display -->
+        <div class="dev-code-container">
+          <pre><code id="devCodeSnippet"></code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL: THÔNG BÁO CẬP NHẬT VIETQR PAYMENT KIT
+       ========================================================================= -->
+  <div id="updateModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 data-i18n="modal_title">Thông báo Cập nhật VietQR Payment Kit (14/10/2026)</h3>
+        <button id="closeModalBtn" class="modal-close-btn" type="button" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p>Nhóm phát triển <b>VietQR Payment Kit</b> thông báo các cải tiến trong phiên bản cập nhật ngày 14/10/2026 nhằm tối ưu hiệu năng và giữ dịch vụ ổn định bền vững trong dài hạn.</p>
+        
+        <div class="info-banner" style="margin: 14px 0;">
+          <b>VietQR vẫn hoạt động bình thường:</b> Chỉ riêng endpoint <code>/v2/generate</code> có kế hoạch ngừng hỗ trợ từ <b>01/01/2027</b>. Quicklink, Portal và các API khác của VietQR vẫn hoạt động hoàn toàn bình thường.
+        </div>
+
+        <h4>1. Quicklink (img.vietqr.io) - SVG-First & Serverless</h4>
+        <p>Quicklink chuyển sang engine render mã QR theo hướng <b>SVG-first</b> trên kiến trúc serverless hiện đại. Tốc độ sinh mã QR được cải thiện <b>gấp 5 lần</b> (từ ~500ms xuống chỉ còn ~100ms), độ sắc nét vector tuyệt đối trên mọi màn hình và bản in.</p>
+
+        <h4>2. Bổ sung Template LoaX</h4>
+        <p>Bên cạnh các template <code>compact</code>, <code>compact2</code>, <code>print</code>, <code>qr_only</code>, VietQR bổ sung template <b><code>loax</code> (2583x3719)</b> chuyên biệt cho dòng thiết bị Loa thanh toán và Loa thông báo chuyển khoản thông minh.</p>
+
+        <h4>3. Chuyển đổi sang thư viện vietqr-core offline</h4>
+        <p>Để tạo mã QR độc lập không phụ thuộc vào hạ tầng mạng bên ngoài, hệ thống tích hợp sẵn thuật toán chuẩn EMVCo Napas247 tạo mã QR trực tiếp trên trình duyệt với thời gian phản hồi 0ms.</p>
+
+        <h4>4. Bảng chính sách tương thích ngược</h4>
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>Hạng mục</th>
+              <th>Cách xử lý & Lộ trình</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>API /v2/generate</b></td>
+              <td>Hoạt động bình thường đến hết 31/12/2026. Chuyển sang thư viện <code>vietqr-core</code> để sinh mã offline.</td>
+            </tr>
+            <tr>
+              <td><b>Quicklink PNG / JPEG</b></td>
+              <td>SVG là tùy chọn khuyến khích. PNG vẫn được phục vụ bình thường.</td>
+            </tr>
+            <tr>
+              <td><b>Tra cứu Mã số thuế</b></td>
+              <td>Chuyển giao dịch vụ sang hệ thống <b>Xinvoice</b> (xinvoice.vn) trước 01/03/2027.</td>
+            </tr>
+            <tr>
+              <td><b>Tra cứu Số tài khoản</b></td>
+              <td>Chuyển dịch sang bộ <b>Cas Pay Out API</b> theo chuẩn Open Banking.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button id="modalOkBtn" class="btn btn-primary" type="button" data-i18n="modal_close">Đóng</button>
       </div>
     </div>
   </div>
 
+  <!-- SITE FOOTER -->
   <footer class="site-footer">
-    <div class="visit-counter">
-      <i class="fa-solid fa-chart-line"></i> <span data-i18n="visit_total">Tổng lượt truy cập: </span><span id="visitCount" data-i18n="visit_loading">Đang tải...</span>
+    <div class="visit-counter-container">
+      <div class="visit-counter">
+        <i class="fa-solid fa-chart-line"></i>
+        <span data-i18n="visit_total">Tổng lượt truy cập: </span>
+        <span id="visitCount" data-i18n="visit_loading">Đang tải...</span>
+      </div>
     </div>
+
+    <!-- Legal & Security Compliance Badges -->
+    <div class="compliance-badges-container">
+      <span class="compliance-badge-item"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="badge_clientside">Client-Side 100% — Không lưu dữ liệu</span></span>
+      <span class="compliance-badge-item"><i class="fa-solid fa-scale-balanced"></i> <span data-i18n="badge_law_nd13">Tuân thủ NĐ 13/2023/NĐ-CP</span></span>
+      <span class="compliance-badge-item"><i class="fa-solid fa-file-contract"></i> <span data-i18n="badge_law_nd52">Tuân thủ NĐ 52/2024/NĐ-CP</span></span>
+      <span class="compliance-badge-item"><i class="fa-solid fa-cloud"></i> <span data-i18n="badge_cloudflare">Bảo vệ bởi Cloudflare WAF</span></span>
+    </div>
+
+    <div>
+      <button id="openLegalModalBtn" class="legal-policy-link" type="button">
+        <i class="fa-solid fa-file-shield"></i>
+        <span data-i18n="footer_legal_btn">Chính sách Bảo mật & Điều khoản Pháp lý</span>
+      </button>
+    </div>
+
     <p data-i18n="footer_designed">Designed and developed with ❤️ by Dang Vo</p>
-    <p data-i18n="footer_copyright">© 2025 VietQR Generator. All rights reserved.</p>
-    <div class="footer-note" style="margin-top: 20px; font-size: 12px; color: #888; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-      <p data-i18n="footer_disclaimer1">Dự án đang trong giai đoạn thử nghiệm và phát triển. Công cụ tạo mã được xây dựng dựa trên việc tham khảo các tiêu chuẩn thanh toán (Napas247) và nhiều nguồn tài liệu uy tín.</p>
-      <p data-i18n="footer_disclaimer2">Website hoạt động hoàn toàn với mục đích phi thương mại, phục vụ cho nhu cầu học tập, tham khảo và tiện ích cá nhân. Chúng tôi không chịu trách nhiệm pháp lý đối với bất kỳ giao dịch tài chính hay rủi ro nào phát sinh từ việc sử dụng hệ thống này.</p>
-      <p data-i18n="footer_disclaimer3">Chúng tôi cam kết không thu thập hay lưu trữ bất kỳ thông tin cá nhân hoặc dữ liệu giao dịch nào của bạn trên máy chủ.</p>
+    <p data-i18n="footer_copyright">© 2026 VietQR Kit & Generator. All rights reserved.</p>
+    
+    <div class="footer-disclaimer-box">
+      <p data-i18n="footer_disclaimer1">Hệ thống xây dựng dựa trên tiêu chuẩn thanh toán quốc gia Napas247, EMVCo và tài liệu kỹ thuật từ <a href="https://www.vietqr.io" target="_blank" style="color: inherit; text-decoration: underline;">VietQR.io (Casso)</a>.</p>
+      <p data-i18n="footer_disclaimer2">VietQR® và NAPAS® là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website hoạt động hoàn toàn với mục đích công cụ tiện ích độc lập, hỗ trợ kỹ thuật và phi thương mại, không trực thuộc hay đại diện cho NAPAS hoặc Casso.</p>
+      <p data-i18n="footer_disclaimer3">Toàn bộ dữ liệu thanh toán được xử lý trực tiếp trên trình duyệt (Client-Side). Chúng tôi cam kết tuyệt đối không thu thập hay lưu trữ bất kỳ thông tin tài khoản hay giao dịch nào của người dùng.</p>
     </div>
   </footer>
 
-  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+  <!-- =========================================================================
+       MODAL: CHÍNH SÁCH BẢO MẬT & ĐIỀU KHOẢN PHÁP LÝ
+       ========================================================================= -->
+  <div id="legalModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 data-i18n="legal_modal_title">Chính Sách Bảo Mật & Miễn Trừ Trách Nhiệm Pháp Lý</h3>
+        <button id="closeLegalModalBtn" class="modal-close-btn" type="button" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="legal-callout">
+          <b>Tuyên bố cam kết:</b> Website hoạt động hoàn toàn với tư cách là công cụ tiện ích mã nguồn mở và kỹ thuật độc lập, hướng tới phục vụ học tập, nghiên cứu và tiện ích thanh toán cá nhân/doanh nghiệp phi thương mại.
+        </div>
+
+        <div class="legal-card-item">
+          <h5><i class="fa-solid fa-shield-halved" style="color: var(--brand-green);"></i> 1. Bảo vệ Dữ liệu Cá nhân (Tuân thủ Nghị định 13/2023/NĐ-CP)</h5>
+          <p>Toàn bộ quá trình tạo mã QR, giải mã hình ảnh (Decoder) và phân tích cú pháp chuỗi EMVCo (Parser) được xử lý <b>100% phía trình duyệt (Client-Side)</b> của bạn. Máy chủ hoàn toàn không ghi log, không lưu trữ cơ sở dữ liệu và không thu thập bất kỳ thông tin số tài khoản, số tiền, họ tên hay lịch sử giao dịch nào của người dùng.</p>
+        </div>
+
+        <div class="legal-card-item">
+          <h5><i class="fa-solid fa-file-contract" style="color: var(--primary);"></i> 2. Hoạt động Thanh toán (Tuân thủ Nghị định 52/2024/NĐ-CP)</h5>
+          <p>Hệ thống <b>KHÔNG</b> cung ứng dịch vụ trung gian thanh toán, không mở tài khoản thanh toán, không giữ tiền và không can thiệp vào dòng tiền giao dịch. Mã VietQR chỉ là phương tiện trực quan hóa thông tin thụ hưởng; giao dịch chuyển khoản thực tế diễn ra trực tiếp giữa người chuyển và ngân hàng thụ hưởng thông qua ứng dụng Mobile Banking được cấp phép bởi Ngân hàng Nhà nước Việt Nam.</p>
+        </div>
+
+        <div class="legal-card-item">
+          <h5><i class="fa-solid fa-copyright" style="color: #e31e24;"></i> 3. Quyền Sở hữu Trí tuệ & Nhãn hiệu</h5>
+          <p><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website là công cụ độc lập, không mạo danh và không đại diện pháp lý cho NAPAS hay Casso (VietQR.io). Mọi nhãn hiệu ngân hàng thuộc quyền sở hữu của các ngân hàng tương ứng.</p>
+        </div>
+
+        <div class="legal-card-item">
+          <h5><i class="fa-solid fa-code" style="color: var(--secondary);"></i> 4. Tiêu chuẩn Kỹ thuật & Giấy phép Mã nguồn mở</h5>
+          <p>Hệ thống xây dựng dựa trên đặc tả kỹ thuật mở EMVCo QR Code Merchant-Presented Mode và tài liệu kỹ thuật từ Napas và VietQR.io. Phần mềm được phân phối tự do theo giấy phép mã nguồn mở <b>MIT License</b>.</p>
+        </div>
+
+        <div class="legal-card-item">
+          <h5><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> 5. Giới hạn Trách nhiệm</h5>
+          <p>Người dùng có trách nhiệm kiểm tra lại thông tin người nhận tiền (Tên chủ tài khoản, Số tài khoản, Ngân hàng và Số tiền) trên màn hình xác nhận của ứng dụng ngân hàng trước khi xác thực giao dịch chuyển tiền.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="legalModalOkBtn" class="btn btn-primary" type="button" data-i18n="modal_close">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT DEPENDENCIES -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="locales.js"></script>
   <script src="script.js"></script>
 </body>

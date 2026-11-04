@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vietqr.pages.dev/sitemap.xml
+
