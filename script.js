@@ -372,6 +372,21 @@ async function fetchCounter() {
 function formatBankOption(bank) {
     if (!bank.id) return bank.text;
     const logoUrl = $(bank.element).data('logo');
+    const shortName = $(bank.element).data('shortname');
+    const fullName = $(bank.element).data('fullname');
+
+    if (shortName && fullName) {
+        return $(
+            '<span class="bank-opt-wrapper">' +
+                '<img src="' + logoUrl + '" class="bank-logo" alt="' + shortName + '" />' +
+                '<span class="bank-opt-content">' +
+                    '<span class="bank-opt-shortname">' + shortName + '</span>' +
+                    '<span class="bank-opt-fullname">' + fullName + '</span>' +
+                '</span>' +
+            '</span>'
+        );
+    }
+
     if (!logoUrl) return bank.text;
     return $('<span class="bank-opt-wrapper"><img src="' + logoUrl + '" class="bank-logo" alt="logo" /><span class="bank-opt-text">' + bank.text + '</span></span>');
 }
@@ -401,16 +416,24 @@ function populateBankSelects() {
         const opt1 = new Option(text, bank.bin, false, false);
         $(opt1).data('logo', bank.logo);
         $(opt1).data('code', bank.code);
+        $(opt1).data('shortname', bank.shortName);
+        $(opt1).data('fullname', bank.name);
         bankSelectEl.append(opt1);
 
         // Tab 6 STK select
         const opt4 = new Option(text, bank.bin, false, false);
         $(opt4).data('logo', bank.logo);
+        $(opt4).data('code', bank.code);
+        $(opt4).data('shortname', bank.shortName);
+        $(opt4).data('fullname', bank.name);
         stkBankSelectEl.append(opt4);
 
         // Tab 4 Deeplink bank select
         const opt3 = new Option(`${bank.shortName} (${bank.code})`, bank.code.toLowerCase(), false, false);
         $(opt3).data('bin', bank.bin);
+        $(opt3).data('logo', bank.logo);
+        $(opt3).data('shortname', bank.shortName);
+        $(opt3).data('fullname', bank.name);
         deeplinkBankSelectEl.append(opt3);
     });
 
