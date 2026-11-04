@@ -13,12 +13,14 @@ Dự án được nâng cấp toàn diện dựa trên đợt phát hành mới 
 ### 1. 🪄 Tạo QR Động (Quicklink SVG-First & vietqr-core Offline)
 - **Chuẩn render SVG-First**: Chuyển đổi engine theo hướng vector SVG trên nền tảng Serverless, tăng tốc độ sinh mã gấp 5 lần (chỉ còn ~100ms), độ sắc nét tuyệt đối trên mọi độ phân giải màn hình và in ấn.
 - **Hỗ trợ định dạng kép**: Tải xuống cả hai định dạng **SVG** (vector) và **PNG** độ phân giải cao.
-- **Đầy đủ 5 template chuẩn**:
+- **Đầy đủ 7 template chuẩn VietQR**:
   - `compact`: 540x540 (Logo Napas & Bank)
   - `compact2`: 540x640 (Kèm khung chi tiết chuyển khoản)
   - `print`: 600x776 (Bản in POS / Hóa đơn thanh toán)
   - `qr_only`: 480x480 (Tối giản chỉ có QR)
-  - `loax`: **Mới** (2583x3719 - Chuyên dụng cho dòng Loa thanh toán & thông báo chuyển khoản thông minh)
+  - `loax`: 2583x3719 (Chuyên dụng cho dòng Loa thanh toán & thông báo chuyển khoản thông minh)
+  - `payos`: 490x490 (Chuẩn tích hợp cổng thanh toán payOS)
+  - `vietqr_pro`: 540x540 (Bản Pro thương mại, viền nhận diện thương hiệu cao cấp)
 - **vietqr-core Offline EMVCo**: Tích hợp thuật toán tính chuỗi payload EMVCo và CRC-16 trực tiếp phía trình duyệt với độ trễ 0ms, không phụ thuộc vào API bên ngoài (chuẩn bị sẵn sàng trước hạn ngừng hỗ trợ endpoint `/v2/generate` vào 01/01/2027).
 - **Tiện ích sao chép**: 1-click sao chép ảnh QR, chuỗi mã hóa, hoặc URL Quicklink.
 

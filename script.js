@@ -451,6 +451,24 @@ const templateMetadata = {
         icon: 'fa-solid fa-volume-high',
         color: '#8b5cf6',
         bg: '#f3e8ff'
+    },
+    payos: {
+        title: 'payOS',
+        dim: '490×490',
+        desc: 'Chuẩn cổng thanh toán payOS',
+        descEn: 'payOS payment gateway standard',
+        icon: 'fa-solid fa-credit-card',
+        color: '#0284c7',
+        bg: '#e0f2fe'
+    },
+    vietqr_pro: {
+        title: 'VietQR Pro',
+        dim: '540×540',
+        desc: 'Bản Pro cao cấp, nhận diện sắc nét',
+        descEn: 'Commercial Pro edition, premium branding',
+        icon: 'fa-solid fa-crown',
+        color: '#e11d48',
+        bg: '#ffe4e6'
     }
 };
 
