@@ -594,11 +594,157 @@ async function loadBanks() {
 
 let currentGenerated = {
     quicklinkUrl: '',
-    svgBlobUrl: '',
-    pngBlobUrl: '',
+    svgUrl: '',
+    rawSvgText: '',
+    customSvgText: '',
+    currentBlobUrl: '',
     emvcoPayload: '',
     crc: ''
 };
+
+let customLogoDataUrl = null;
+
+function injectCustomLogoToSvg(svgText, logoDataUrl) {
+    if (!logoDataUrl || !svgText) return svgText;
+    try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgText, "image/svg+xml");
+        const logo = doc.getElementById("vietqr-logo");
+        if (logo) {
+            logo.setAttribute("href", logoDataUrl);
+            logo.removeAttribute("xlink:href");
+            logo.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            return new XMLSerializer().serializeToString(doc);
+        }
+    } catch (e) {
+        console.warn('DOMParser failed, using regex fallback', e);
+    }
+    return svgText.replace(/(<image[^>]*id=["']vietqr-logo["'][^>]*href=["'])[^"']*(["'])/, '$1' + logoDataUrl + '$2');
+}
+
+function applyCustomLogoAndDisplay() {
+    if (!currentGenerated.rawSvgText) return;
+    const finalSvg = customLogoDataUrl
+        ? injectCustomLogoToSvg(currentGenerated.rawSvgText, customLogoDataUrl)
+        : currentGenerated.rawSvgText;
+
+    currentGenerated.customSvgText = finalSvg;
+
+    if (currentGenerated.currentBlobUrl) {
+        URL.revokeObjectURL(currentGenerated.currentBlobUrl);
+    }
+    const blob = new Blob([finalSvg], { type: 'image/svg+xml;charset=utf-8' });
+    currentGenerated.currentBlobUrl = URL.createObjectURL(blob);
+    const imgEl = document.getElementById('qrimg');
+    imgEl.src = currentGenerated.currentBlobUrl;
+    document.getElementById('qr-result-wrapper').style.opacity = '1';
+}
+
+function handleLogoSelected(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        alert(locales[currentLang]['alert_logo_invalid']);
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        alert(locales[currentLang]['alert_logo_invalid']);
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            // Background trắng sạch chống nhiễu quét mã QR
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 256, 256);
+            // Căn chỉnh ảnh tỷ lệ chuẩn vào tâm
+            const scale = Math.min(236 / img.width, 236 / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (256 - w) / 2;
+            const y = (256 - h) / 2;
+            ctx.drawImage(img, x, y, w, h);
+            customLogoDataUrl = canvas.toDataURL('image/png');
+
+            document.getElementById('customLogoThumb').src = customLogoDataUrl;
+            document.getElementById('logoFileName').innerText = file.name;
+            document.getElementById('logoFileSize').innerText = (file.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('logoDropzone').style.display = 'none';
+            document.getElementById('logoPreviewCard').style.display = 'flex';
+
+            if (currentGenerated.rawSvgText) {
+                applyCustomLogoAndDisplay();
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeCustomLogo() {
+    customLogoDataUrl = null;
+    const fileInput = document.getElementById('qr-logo-file-input');
+    if (fileInput) fileInput.value = '';
+    document.getElementById('logoDropzone').style.display = 'flex';
+    document.getElementById('logoPreviewCard').style.display = 'none';
+
+    if (currentGenerated.rawSvgText) {
+        applyCustomLogoAndDisplay();
+    }
+}
+
+function initCustomLogoUploader() {
+    const fileInput = document.getElementById('qr-logo-file-input');
+    const dropzone = document.getElementById('logoDropzone');
+    const selectBtn = document.getElementById('selectLogoBtn');
+    const removeBtn = document.getElementById('removeLogoBtn');
+
+    if (!fileInput || !dropzone) return;
+
+    dropzone.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    if (selectBtn) {
+        selectBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            handleLogoSelected(this.files[0]);
+        }
+    });
+
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', function() {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleLogoSelected(e.dataTransfer.files[0]);
+        }
+    });
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            removeCustomLogo();
+        });
+    }
+}
 
 function genAndScanQR() {
     const placeholder = document.getElementById('qr-result-placeholder');
@@ -662,71 +808,100 @@ function genAndScanQR() {
         }, 100);
     }
 
-    imgEl.src = displayUrl;
-
-    imgEl.onload = function() {
-        resultWrapper.style.opacity = '1';
-    };
-
-    imgEl.onerror = function() {
-        resultWrapper.style.opacity = '1';
-        // Fallback: If upstream image loading fails, render offline VietQR via client-side QRCode
-        if (typeof QRCode !== 'undefined' && currentGenerated.emvcoPayload) {
-            const tempDiv = document.createElement('div');
-            new QRCode(tempDiv, {
-                text: currentGenerated.emvcoPayload,
-                width: 480,
-                height: 480,
-                correctLevel: QRCode.CorrectLevel.M
-            });
-            setTimeout(() => {
-                const canvas = tempDiv.querySelector('canvas');
-                if (canvas) {
-                    imgEl.src = canvas.toDataURL('image/png');
-                    return;
+    // Tải SVG và áp dụng logo tùy chỉnh nếu có
+    fetch(displayUrl)
+        .then(res => {
+            if (!res.ok) throw new Error('Network response not ok');
+            return res.text();
+        })
+        .then(svgText => {
+            currentGenerated.rawSvgText = svgText;
+            applyCustomLogoAndDisplay();
+        })
+        .catch(err => {
+            console.warn('Direct fetch failed, falling back to direct img src or offline QR', err);
+            imgEl.src = displayUrl;
+            imgEl.onload = function() {
+                resultWrapper.style.opacity = '1';
+            };
+            imgEl.onerror = function() {
+                resultWrapper.style.opacity = '1';
+                if (typeof QRCode !== 'undefined' && currentGenerated.emvcoPayload) {
+                    const tempDiv = document.createElement('div');
+                    new QRCode(tempDiv, {
+                        text: currentGenerated.emvcoPayload,
+                        width: 480,
+                        height: 480,
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                    setTimeout(() => {
+                        const canvas = tempDiv.querySelector('canvas');
+                        if (canvas) {
+                            imgEl.src = canvas.toDataURL('image/png');
+                            return;
+                        }
+                        const img = tempDiv.querySelector('img');
+                        if (img) {
+                            imgEl.src = img.src;
+                            return;
+                        }
+                        alert(locales[currentLang]['alert_qr_failed']);
+                    }, 50);
+                } else {
+                    alert(locales[currentLang]['alert_qr_failed']);
                 }
-                const img = tempDiv.querySelector('img');
-                if (img) {
-                    imgEl.src = img.src;
-                    return;
-                }
-                alert(locales[currentLang]['alert_qr_failed']);
-            }, 50);
-        } else {
-            alert(locales[currentLang]['alert_qr_failed']);
-        }
-    };
+            };
+        });
 
     updateDevSnippet();
 }
 
 async function downloadSvg() {
-    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
-    if (!svgUrl) return;
-    try {
-        const res = await fetch(svgUrl);
-        const svgText = await res.text();
-        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `VietQR-${document.getElementById('i_acc').value || 'code'}.svg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-    } catch (e) {
-        window.open(svgUrl, '_blank');
+    let svgContent = currentGenerated.customSvgText || currentGenerated.rawSvgText;
+    if (!svgContent) {
+        const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+        if (!svgUrl) return;
+        try {
+            const res = await fetch(svgUrl);
+            svgContent = await res.text();
+            if (customLogoDataUrl) {
+                svgContent = injectCustomLogoToSvg(svgContent, customLogoDataUrl);
+            }
+        } catch (e) {
+            window.open(svgUrl, '_blank');
+            return;
+        }
     }
+    const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `VietQR-${document.getElementById('i_acc').value || 'code'}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
 }
 
 async function downloadPng() {
-    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
-    if (!svgUrl) return;
+    let svgContent = currentGenerated.customSvgText || currentGenerated.rawSvgText;
+    if (!svgContent) {
+        const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+        if (!svgUrl) return;
+        try {
+            const res = await fetch(svgUrl);
+            svgContent = await res.text();
+            if (customLogoDataUrl) {
+                svgContent = injectCustomLogoToSvg(svgContent, customLogoDataUrl);
+            }
+        } catch (e) {
+            window.open(currentGenerated.quicklinkUrl, '_blank');
+            return;
+        }
+    }
+
     try {
-        const res = await fetch(svgUrl);
-        const svgText = await res.text();
-        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
         const img = new Image();
         img.onload = () => {
@@ -759,12 +934,24 @@ async function downloadPng() {
 }
 
 async function copyQrImage() {
-    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
-    if (!svgUrl) return;
+    let svgContent = currentGenerated.customSvgText || currentGenerated.rawSvgText;
+    if (!svgContent) {
+        const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+        if (!svgUrl) return;
+        try {
+            const res = await fetch(svgUrl);
+            svgContent = await res.text();
+            if (customLogoDataUrl) {
+                svgContent = injectCustomLogoToSvg(svgContent, customLogoDataUrl);
+            }
+        } catch (e) {
+            alert(locales[currentLang]['alert_copy_failed']);
+            return;
+        }
+    }
+
     try {
-        const res = await fetch(svgUrl);
-        const svgText = await res.text();
-        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
         const img = new Image();
         img.onload = () => {
@@ -1676,6 +1863,7 @@ $(document).ready(function() {
     initBankSelect('#stk-bank-select');
     initTemplateSelect();
     initFormatSegmentedControl();
+    initCustomLogoUploader();
 
     $('#bank-select').on('change', function() {
         $('#i_bank').val($(this).val());

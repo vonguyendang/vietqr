@@ -174,6 +174,46 @@
                 </div>
 
                 <div class="formrow">
+                  <label data-i18n="label_custom_logo">Logo ở tâm mã QR (Tùy chọn):</label>
+                  <input type="file" id="qr-logo-file-input" accept="image/png, image/jpeg, image/svg+xml, image/webp" style="display: none;" />
+                  
+                  <div class="custom-logo-uploader" id="customLogoUploader">
+                    <!-- State 1: Upload prompt -->
+                    <div class="logo-dropzone" id="logoDropzone">
+                      <div class="logo-dropzone-icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                      </div>
+                      <div class="logo-dropzone-text">
+                        <span class="logo-dropzone-title" data-i18n="custom_logo_upload_title">Tải lên Logo công ty hoặc Ảnh đại diện</span>
+                        <span class="logo-dropzone-sub" data-i18n="custom_logo_upload_sub">PNG, JPG, SVG hoặc WebP (Tối đa 2MB, thay thế logo VietQR ở giữa)</span>
+                      </div>
+                      <button type="button" class="btn btn-outline btn-sm" id="selectLogoBtn">
+                        <i class="fa-solid fa-folder-open"></i> <span data-i18n="custom_logo_browse">Chọn ảnh</span>
+                      </button>
+                    </div>
+
+                    <!-- State 2: Selected Preview -->
+                    <div class="logo-preview-card" id="logoPreviewCard" style="display: none;">
+                      <div class="logo-preview-thumb-box">
+                        <img id="customLogoThumb" src="" alt="Logo Preview" />
+                      </div>
+                      <div class="logo-preview-info">
+                        <div class="logo-preview-name-row">
+                          <span class="logo-preview-name" id="logoFileName">logo.png</span>
+                          <span class="suite-badge" style="background: var(--badge-green-bg); color: var(--badge-green-text);" data-i18n="custom_logo_active_badge">Sẵn sàng ở tâm QR</span>
+                        </div>
+                        <span class="logo-preview-meta" id="logoFileSize">0 KB</span>
+                      </div>
+                      <div class="logo-preview-actions">
+                        <button type="button" class="btn-icon-danger" id="removeLogoBtn" data-i18n-title="custom_logo_remove_title" title="Xóa logo và dùng lại logo VietQR mặc định">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="formrow">
                   <label for="i_amount">
                     <span data-i18n="label_amount">Số tiền (Tùy chọn, VNĐ):</span>
                     <span id="amountFormattedPreview" class="label-hint" style="color: var(--brand-green); font-weight: 600;"></span>
