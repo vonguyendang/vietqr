@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VietQR Payment Suite - Bộ công cụ Napas247, SVG Quicklink, Decoder, Parser & Tra cứu</title>
+  <title>VietQR Kit - Công cụ tiện ích Napas247, SVG Quicklink, Decoder & Tra cứu độc lập</title>
   <link rel="shortcut icon" href="favicon_io/android-chrome-512x512.png" type="image/x-icon">
   
   <!-- CSS Dependencies -->
@@ -30,7 +30,7 @@
   <div id="announcementBar" class="announcement-bar">
     <span class="announcement-badge" data-i18n="banner_badge">Cập nhật 10/2026</span>
     <div class="announcement-content">
-      <span data-i18n="banner_text">VietQR chuyển đổi engine Quicklink sang SVG-First, Serverless (nhanh gấp 5 lần), bổ sung template LoaX & lộ trình offline vietqr-core.</span>
+      <span data-i18n="banner_text">VietQR Kit chuyển đổi engine Quicklink sang SVG-First, Serverless (nhanh gấp 5 lần), bổ sung 7 template VietQR & lộ trình offline vietqr-core.</span>
       <button id="openUpdateModalBtn" class="announcement-link" type="button">
         <span data-i18n="banner_link">Chi tiết cập nhật</span> <i class="fa-solid fa-arrow-right"></i>
       </button>
@@ -49,7 +49,7 @@
         </div>
         <div class="brand-title">
           VietQR <span>Kit</span>
-          <span class="suite-badge" data-i18n="header_badge">PRO Suite</span>
+          <span class="suite-badge" data-i18n="header_badge">Tiện ích Độc lập • Non-official</span>
         </div>
       </a>
       <div class="lang-switcher">
@@ -58,8 +58,12 @@
       </div>
     </div>
     <div class="header-lead">
+      <div class="header-identity-pill">
+        <span class="identity-badge-tag"><i class="fa-solid fa-code-branch"></i> <span data-i18n="header_identity_tag">Mã Nguồn Mở</span></span>
+        <span class="identity-badge-desc" data-i18n="header_identity_desc">Dự án tiện ích độc lập (Non-official) • Phục vụ cộng đồng & Phi thương mại • Không trực thuộc NAPAS hay Casso</span>
+      </div>
       <h1 data-i18n="header_h1">VietQR Payment Suite & Core</h1>
-      <p data-i18n="header_p">Nền tảng tạo mã VietQR SVG-First, Giải mã ảnh QR, Phân tích chuỗi EMVCo TLV, Bank Deeplink, Tra cứu 76+ Ngân hàng, STK & Mã số thuế.</p>
+      <p data-i18n="header_p">Công cụ mã nguồn mở độc lập hỗ trợ tạo mã VietQR SVG-First, Giải mã ảnh QR, Phân tích chuỗi EMVCo TLV, Bank Deeplink, Tra cứu 76+ Ngân hàng, STK & Mã số thuế.</p>
       
       <div class="quick-stats-chips">
         <span class="stat-chip"><i class="fa-solid fa-bolt"></i> SVG-First 100ms</span>
@@ -927,9 +931,13 @@
     <p data-i18n="footer_copyright">© 2026 VietQR Kit & Generator. All rights reserved.</p>
     
     <div class="footer-disclaimer-box">
-      <p data-i18n="footer_disclaimer1">Hệ thống xây dựng dựa trên tiêu chuẩn thanh toán quốc gia Napas247, EMVCo và tài liệu kỹ thuật từ <a href="https://www.vietqr.io" target="_blank" style="color: inherit; text-decoration: underline;">VietQR.io (Casso)</a>.</p>
-      <p data-i18n="footer_disclaimer2">VietQR® và NAPAS® là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website hoạt động hoàn toàn với mục đích công cụ tiện ích độc lập, hỗ trợ kỹ thuật và phi thương mại, không trực thuộc hay đại diện cho NAPAS hoặc Casso.</p>
-      <p data-i18n="footer_disclaimer3">Toàn bộ dữ liệu thanh toán được xử lý trực tiếp trên trình duyệt (Client-Side). Chúng tôi cam kết tuyệt đối không thu thập hay lưu trữ bất kỳ thông tin tài khoản hay giao dịch nào của người dùng.</p>
+      <div class="footer-non-official-badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="footer_independent_badge">CÔNG CỤ ĐỘC LẬP • PHI THƯƠNG MẠI • MÃ NGUỒN MỞ</span>
+      </div>
+      <p data-i18n="footer_disclaimer1">Hệ thống được phát triển dựa trên tiêu chuẩn thanh toán quốc gia Napas247, EMVCo và tài liệu kỹ thuật từ <a href="https://www.vietqr.io" target="_blank" style="color: inherit; text-decoration: underline;">VietQR.io (Casso)</a>.</p>
+      <p data-i18n="footer_disclaimer2"><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website hoạt động hoàn toàn với tư cách công cụ tiện ích độc lập, phục vụ nghiên cứu kỹ thuật và phi thương mại; không trực thuộc, không được ủy quyền hay đại diện pháp lý cho NAPAS hoặc Casso. Website không cung ứng dịch vụ trung gian thanh toán và không can thiệp vào dòng tiền giao dịch.</p>
+      <p data-i18n="footer_disclaimer3">Toàn bộ dữ liệu được xử lý trực tiếp trên trình duyệt (Client-Side). Hệ thống cam kết tuyệt đối không thu thập, không ghi nhận và không lưu trữ bất kỳ thông tin tài khoản hay giao dịch nào của người dùng.</p>
     </div>
   </footer>
 
@@ -944,7 +952,7 @@
       </div>
       <div class="modal-body">
         <div class="legal-callout" data-i18n="legal_callout">
-          <b>Tuyên bố cam kết:</b> Website hoạt động hoàn toàn với tư cách là công cụ tiện ích mã nguồn mở và kỹ thuật độc lập, hướng tới phục vụ học tập, nghiên cứu và tiện ích thanh toán cá nhân/doanh nghiệp phi thương mại.
+          <b>Tuyên bố cam kết & độc lập:</b> Website hoạt động hoàn toàn với tư cách là công cụ tiện ích mã nguồn mở và kỹ thuật độc lập, hướng tới phục vụ học tập, nghiên cứu và tiện ích thanh toán cá nhân/doanh nghiệp phi thương mại. Website KHÔNG trực thuộc, không được ủy quyền hay đại diện pháp lý cho NAPAS hoặc Casso.
         </div>
 
         <div class="legal-card-item">
@@ -959,7 +967,7 @@
 
         <div class="legal-card-item">
           <h5><i class="fa-solid fa-copyright" style="color: #e31e24;"></i> <span data-i18n="legal_sec3_title">3. Quyền Sở hữu Trí tuệ & Nhãn hiệu</span></h5>
-          <p data-i18n="legal_sec3_body"><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website là công cụ độc lập, không mạo danh và không đại diện pháp lý cho NAPAS hay Casso (VietQR.io). Mọi nhãn hiệu ngân hàng thuộc quyền sở hữu của các ngân hàng tương ứng.</p>
+          <p data-i18n="legal_sec3_body"><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website hoạt động hoàn toàn với tư cách công cụ tiện ích độc lập, không mạo danh, không trực thuộc, không được ủy quyền hay đại diện pháp lý cho NAPAS hoặc Casso (VietQR.io). Mọi nhãn hiệu ngân hàng thuộc quyền sở hữu của các tổ chức tài chính tương ứng.</p>
         </div>
 
         <div class="legal-card-item">

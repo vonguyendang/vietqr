@@ -280,6 +280,39 @@ code, pre, .mono {
   margin-bottom: 24px;
 }
 
+.header-identity-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(241, 245, 249, 0.85);
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  padding: 4px 12px 4px 6px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+  max-width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.identity-badge-tag {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.identity-badge-desc {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
 .header-lead h1 {
   font-size: 32px;
   font-weight: 800;
@@ -1695,6 +1728,27 @@ textarea::placeholder {
   color: var(--text-light);
 }
 
+.footer-non-official-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(226, 232, 240, 0.7);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.footer-non-official-badge i {
+  color: var(--primary);
+  font-size: 11px;
+}
+
 /* --- SELECT2 CUSTOM STYLING --- */
 .select2-container {
   width: 100% !important;
@@ -2662,6 +2716,19 @@ textarea::placeholder {
   .header-lead p {
     font-size: 13px;
     margin-bottom: 10px;
+  }
+
+  .header-identity-pill {
+    padding: 5px 10px;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .identity-badge-desc {
+    font-size: 11px;
+    text-align: center;
   }
 
   .stat-chip {

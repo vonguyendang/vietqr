@@ -91,11 +91,12 @@ Website được thiết kế tuân thủ nghiêm ngặt các quy định pháp 
 
 2. **Quy chế Hoạt động Thanh toán (Nghị định 52/2024/NĐ-CP)**:
    - Website **KHÔNG** phải là tổ chức cung ứng dịch vụ trung gian thanh toán, không mở tài khoản, không giữ tiền và không can thiệp vào dòng tiền.
-   - Website chỉ đóng vai trò là công cụ định dạng hiển thị trực quan (tương tự việc in số tài khoản lên hóa đơn). Giao dịch chuyển tiền thực tế diễn ra trực tiếp giữa khách hàng và ngân hàng thông qua ứng dụng Mobile Banking chính thống có xác thực OTP / FaceID.
+   - Website chỉ đóng vai trò là công cụ tiện ích độc lập, hỗ trợ kỹ thuật và hiển thị trực quan thông tin thụ hưởng (tương tự việc in số tài khoản lên hóa đơn). Giao dịch chuyển tiền thực tế diễn ra trực tiếp giữa khách hàng và ngân hàng thụ hưởng thông qua ứng dụng Mobile Banking được cấp phép bởi Ngân hàng Nhà nước Việt Nam.
 
-3. **Quyền Sở hữu Trí tuệ & Nhãn hiệu**:
-   - **VietQR®** và **NAPAS®** là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS).
-   - Website hoạt động độc lập phi thương mại, phục vụ nghiên cứu và tiện ích cá nhân, không mạo danh hay đại diện cho NAPAS hoặc Casso.
+3. **Quyền Sở hữu Trí tuệ & Nhãn hiệu (Tuyên bố Miễn trừ Đại diện)**:
+   - Hệ thống được phát triển dựa trên tiêu chuẩn thanh toán quốc gia Napas247, EMVCo và tài liệu kỹ thuật từ [VietQR.io (Casso)](https://www.vietqr.io).
+   - **VietQR®** và **NAPAS®** là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website hoạt động hoàn toàn với tư cách công cụ tiện ích độc lập, phục vụ nghiên cứu kỹ thuật và phi thương mại; không trực thuộc, không được ủy quyền hay đại diện pháp lý cho NAPAS hoặc Casso. Website không cung ứng dịch vụ trung gian thanh toán và không can thiệp vào dòng tiền giao dịch.
+   - Toàn bộ dữ liệu được xử lý trực tiếp trên trình duyệt (Client-Side). Hệ thống cam kết tuyệt đối không thu thập, không ghi nhận và không lưu trữ bất kỳ thông tin tài khoản hay giao dịch nào của người dùng.
 
 4. **Bảo Mật Hạ Tầng**:
    - Tích hợp Cloudflare Turnstile ngăn chặn bot spam và DDoS.
