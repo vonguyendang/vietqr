@@ -646,8 +646,10 @@ function genAndScanQR() {
     if (name) params.append('accountName', removeVietnameseTones(name).toUpperCase());
 
     const queryString = params.toString();
-    const quicklinkUrl = `https://img.vietqr.io/image/${bank}-${acc}-${template}.${format}${queryString ? '?' + queryString : ''}`;
-    currentGenerated.quicklinkUrl = quicklinkUrl;
+    const displayUrl = `https://img.vietqr.io/image/${bank}-${acc}-${template}.svg${queryString ? '?' + queryString : ''}`;
+    const exportUrl = `https://img.vietqr.io/image/${bank}-${acc}-${template}.${format}${queryString ? '?' + queryString : ''}`;
+    currentGenerated.quicklinkUrl = exportUrl;
+    currentGenerated.svgUrl = displayUrl;
 
     // Smooth UI transition
     placeholder.style.display = 'none';
@@ -660,43 +662,48 @@ function genAndScanQR() {
         }, 100);
     }
 
-    imgEl.src = quicklinkUrl;
+    imgEl.src = displayUrl;
 
     imgEl.onload = function() {
         resultWrapper.style.opacity = '1';
-
-        try {
-            const canvas = document.createElement('canvas');
-            canvas.width = imgEl.naturalWidth || 540;
-            canvas.height = imgEl.naturalHeight || 540;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imgEl, 0, 0);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-            if (code && code.data) {
-                qrStrEl.innerText = code.data;
-                const idx = code.data.indexOf('6304');
-                if (idx !== -1) {
-                    qrcEl.innerText = code.data.substr(idx + 4, 4);
-                }
-            }
-        } catch (e) {
-            console.log('jsQR decode skipped, offline EMVCo active');
-        }
     };
 
     imgEl.onerror = function() {
         resultWrapper.style.opacity = '1';
-        alert(locales[currentLang]['alert_qr_failed']);
+        // Fallback: If upstream image loading fails, render offline VietQR via client-side QRCode
+        if (typeof QRCode !== 'undefined' && currentGenerated.emvcoPayload) {
+            const tempDiv = document.createElement('div');
+            new QRCode(tempDiv, {
+                text: currentGenerated.emvcoPayload,
+                width: 480,
+                height: 480,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+            setTimeout(() => {
+                const canvas = tempDiv.querySelector('canvas');
+                if (canvas) {
+                    imgEl.src = canvas.toDataURL('image/png');
+                    return;
+                }
+                const img = tempDiv.querySelector('img');
+                if (img) {
+                    imgEl.src = img.src;
+                    return;
+                }
+                alert(locales[currentLang]['alert_qr_failed']);
+            }, 50);
+        } else {
+            alert(locales[currentLang]['alert_qr_failed']);
+        }
     };
 
     updateDevSnippet();
 }
 
 async function downloadSvg() {
-    if (!currentGenerated.quicklinkUrl) return;
+    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+    if (!svgUrl) return;
     try {
-        const svgUrl = currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg');
         const res = await fetch(svgUrl);
         const svgText = await res.text();
         const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
@@ -709,63 +716,79 @@ async function downloadSvg() {
         document.body.removeChild(a);
         URL.revokeObjectURL(blobUrl);
     } catch (e) {
-        window.open(currentGenerated.quicklinkUrl, '_blank');
+        window.open(svgUrl, '_blank');
     }
 }
 
 async function downloadPng() {
-    if (!currentGenerated.quicklinkUrl) return;
+    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+    if (!svgUrl) return;
     try {
-        const pngUrl = currentGenerated.quicklinkUrl.replace(/\.svg/, '.png');
-        const res = await fetch(pngUrl);
-        const blob = await res.blob();
+        const res = await fetch(svgUrl);
+        const svgText = await res.text();
+        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `VietQR-${document.getElementById('i_acc').value || 'code'}.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-    } catch (e) {
-        const imgEl = document.getElementById('qrimg');
-        const canvas = document.createElement('canvas');
-        canvas.width = imgEl.naturalWidth || 540;
-        canvas.height = imgEl.naturalHeight || 540;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(imgEl, 0, 0);
-        canvas.toBlob(blob => {
-            if (!blob) return alert(locales[currentLang]['alert_download_failed']);
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = `VietQR-${document.getElementById('i_acc').value || 'code'}.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || 540;
+            canvas.height = img.naturalHeight || 640;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
             URL.revokeObjectURL(blobUrl);
-        });
+            canvas.toBlob(pngBlob => {
+                if (!pngBlob) return alert(locales[currentLang]['alert_download_failed']);
+                const dlUrl = URL.createObjectURL(pngBlob);
+                const a = document.createElement('a');
+                a.href = dlUrl;
+                a.download = `VietQR-${document.getElementById('i_acc').value || 'code'}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(dlUrl);
+            }, 'image/png');
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(blobUrl);
+            window.open(currentGenerated.quicklinkUrl, '_blank');
+        };
+        img.src = blobUrl;
+    } catch (e) {
+        window.open(currentGenerated.quicklinkUrl, '_blank');
     }
 }
 
 async function copyQrImage() {
-    const imgEl = document.getElementById('qrimg');
-    if (!imgEl || !imgEl.src) return;
+    const svgUrl = currentGenerated.svgUrl || (currentGenerated.quicklinkUrl ? currentGenerated.quicklinkUrl.replace(/\.(png|jpg|jpeg)/, '.svg') : '');
+    if (!svgUrl) return;
     try {
-        const canvas = document.createElement('canvas');
-        canvas.width = imgEl.naturalWidth || 540;
-        canvas.height = imgEl.naturalHeight || 540;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(imgEl, 0, 0);
-        canvas.toBlob(async blob => {
-            if (!blob) return;
-            try {
-                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-                showTempButtonFeedback(document.getElementById('copyImageBtn'), '<i class="fa-solid fa-check"></i> Đã sao chép ảnh!');
-            } catch (err) {
-                alert(locales[currentLang]['alert_copy_failed']);
-            }
-        });
+        const res = await fetch(svgUrl);
+        const svgText = await res.text();
+        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || 540;
+            canvas.height = img.naturalHeight || 640;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            URL.revokeObjectURL(blobUrl);
+            canvas.toBlob(async pngBlob => {
+                if (!pngBlob) return alert(locales[currentLang]['alert_copy_failed']);
+                try {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+                    showTempButtonFeedback(document.getElementById('copyImageBtn'), '<i class="fa-solid fa-check"></i> Đã sao chép ảnh!');
+                } catch (err) {
+                    alert(locales[currentLang]['alert_copy_failed']);
+                }
+            }, 'image/png');
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(blobUrl);
+            alert(locales[currentLang]['alert_copy_failed']);
+        };
+        img.src = blobUrl;
     } catch (e) {
         alert(locales[currentLang]['alert_copy_failed']);
     }
