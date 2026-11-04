@@ -63,10 +63,10 @@
       
       <div class="quick-stats-chips">
         <span class="stat-chip"><i class="fa-solid fa-bolt"></i> SVG-First 100ms</span>
-        <span class="stat-chip"><i class="fa-solid fa-building-columns"></i> 76+ Ngân Hàng</span>
+        <span class="stat-chip"><i class="fa-solid fa-building-columns"></i> <span data-i18n="chip_banks">76+ Ngân Hàng</span></span>
         <span class="stat-chip"><i class="fa-solid fa-mobile-screen"></i> 35+ App Deeplink</span>
         <span class="stat-chip"><i class="fa-solid fa-shield-halved"></i> EMVCo Napas247</span>
-        <span class="stat-chip"><i class="fa-solid fa-paste"></i> Dán ảnh Ctrl+V</span>
+        <span class="stat-chip"><i class="fa-solid fa-paste"></i> <span data-i18n="chip_paste">Dán ảnh Ctrl+V</span></span>
       </div>
     </div>
   </header>
@@ -415,9 +415,9 @@
                 <thead>
                   <tr>
                     <th>Tag</th>
-                    <th>Tên trường (Field Name)</th>
-                    <th>Độ dài</th>
-                    <th>Nội dung giải mã (Value)</th>
+                    <th data-i18n="tlv_col_field">Tên trường (Field Name)</th>
+                    <th data-i18n="tlv_col_len">Độ dài</th>
+                    <th data-i18n="tlv_col_val">Nội dung giải mã (Value)</th>
                   </tr>
                 </thead>
                 <tbody id="tlvTableBody">
@@ -463,15 +463,15 @@
         <!-- Interactive sentence / form -->
         <div class="deeplink-demo-box">
           <div class="deeplink-interactive-sentence">
-            Mở App
+            <span data-i18n="dl_sentence_open">Mở App</span>
             <select id="deeplinkAppSelect"></select>
-            để thanh toán số tiền
+            <span data-i18n="dl_sentence_to_pay">để thanh toán số tiền</span>
             <input type="number" id="deeplinkAmount" value="50000" min="0" placeholder="Số tiền" /> VNĐ
-            với nội dung
+            <span data-i18n="dl_sentence_with_desc">với nội dung</span>
             <input type="text" id="deeplinkDesc" value="Thanh toan don hang" placeholder="Nội dung" />
-            tới số tài khoản
+            <span data-i18n="dl_sentence_to_acc">tới số tài khoản</span>
             <input type="text" id="deeplinkAcc" value="113366668888" placeholder="Số TK nhận" />
-            tại ngân hàng
+            <span data-i18n="dl_sentence_at_bank">tại ngân hàng</span>
             <select id="deeplinkBankSelect"></select>.
           </div>
         </div>
@@ -479,7 +479,7 @@
         <div class="deeplink-output-container">
           <div class="deeplink-url-box">
             <div>
-              <label style="margin-bottom: 8px;">Đường dẫn Deeplink tạo ra:</label>
+              <label style="margin-bottom: 8px;" data-i18n="dl_label_output">Đường dẫn Deeplink tạo ra:</label>
               <div class="raw-payload-card" style="margin-bottom: 16px;">
                 <div class="raw-payload-header">
                   <span>dl.vietqr.io/pay</span>
@@ -515,12 +515,12 @@
             <table class="apps-table">
               <thead>
                 <tr>
-                  <th>Ứng dụng</th>
-                  <th>Ngân hàng</th>
-                  <th>Mã App (appId)</th>
-                  <th>Tự điền (Autofill)</th>
-                  <th>Lượt tải / tháng</th>
-                  <th>Thao tác</th>
+                  <th data-i18n="dl_col_app">Ứng dụng</th>
+                  <th data-i18n="dl_col_bank">Ngân hàng</th>
+                  <th data-i18n="dl_col_appid">Mã App (appId)</th>
+                  <th data-i18n="dl_col_autofill">Tự điền (Autofill)</th>
+                  <th data-i18n="dl_col_downloads">Lượt tải / tháng</th>
+                  <th data-i18n="dl_col_action">Thao tác</th>
                 </tr>
               </thead>
               <tbody id="deeplinkAppsTableBody">
@@ -565,7 +565,7 @@
         <!-- Developer Documentation Snippet -->
         <div class="info-banner" style="margin-top: 30px;">
           <h4 style="font-weight: 700; margin-bottom: 8px; color: var(--text-main);" data-i18n="bank_dev_title">Đặc tả API Ngân hàng cho Nhà phát triển</h4>
-          <p style="margin-bottom: 10px;">Lấy danh sách ngân hàng thời gian thực qua giao thức REST API:</p>
+          <p style="margin-bottom: 10px;" data-i18n="bank_realtime_desc">Lấy danh sách ngân hàng thời gian thực qua giao thức REST API JSON:</p>
           <div class="raw-payload-card" style="margin-bottom: 0;">
             <div class="raw-payload-header">
               <span>GET https://api.vietqr.io/v2/banks</span>
@@ -660,7 +660,7 @@
           </div>
 
           <div class="result-field">
-            <div class="result-field-label">Ngân hàng & Số tài khoản:</div>
+            <div class="result-field-label" data-i18n="stk_col_bank_and_acc">Ngân hàng & Số tài khoản:</div>
             <div id="stkBankAndAcc" class="result-field-value">Vietcombank - 113366668888</div>
           </div>
 
@@ -773,7 +773,7 @@
             <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-i18n="dev_desc">Tích hợp tạo mã VietQR Quicklink SVG, sinh chuỗi EMVCo và mở Bank Deeplink trong dự án phần mềm của bạn.</p>
           </div>
           <button id="copyDevSnippetBtn" class="btn btn-primary btn-sm" type="button">
-            <i class="fa-solid fa-copy"></i> Sao chép mã nguồn
+            <i class="fa-solid fa-copy"></i> <span data-i18n="dev_copy_code">Sao chép mã nguồn</span>
           </button>
         </div>
 
@@ -807,45 +807,45 @@
         <button id="closeModalBtn" class="modal-close-btn" type="button" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <p>Nhóm phát triển <b>VietQR Payment Kit</b> thông báo các cải tiến trong phiên bản cập nhật ngày 14/10/2026 nhằm tối ưu hiệu năng và giữ dịch vụ ổn định bền vững trong dài hạn.</p>
+        <p data-i18n="modal_update_intro">Nhóm phát triển <b>VietQR Payment Kit</b> thông báo các cải tiến trong phiên bản cập nhật ngày 14/10/2026 nhằm tối ưu hiệu năng và giữ dịch vụ ổn định bền vững trong dài hạn.</p>
         
-        <div class="info-banner" style="margin: 14px 0;">
+        <div class="info-banner" style="margin: 14px 0;" data-i18n="modal_update_banner">
           <b>VietQR vẫn hoạt động bình thường:</b> Chỉ riêng endpoint <code>/v2/generate</code> có kế hoạch ngừng hỗ trợ từ <b>01/01/2027</b>. Quicklink, Portal và các API khác của VietQR vẫn hoạt động hoàn toàn bình thường.
         </div>
 
-        <h4>1. Quicklink (img.vietqr.io) - SVG-First & Serverless</h4>
-        <p>Quicklink chuyển sang engine render mã QR theo hướng <b>SVG-first</b> trên kiến trúc serverless hiện đại. Tốc độ sinh mã QR được cải thiện <b>gấp 5 lần</b> (từ ~500ms xuống chỉ còn ~100ms), độ sắc nét vector tuyệt đối trên mọi màn hình và bản in.</p>
+        <h4 data-i18n="modal_update_h1">1. Quicklink (img.vietqr.io) - SVG-First & Serverless</h4>
+        <p data-i18n="modal_update_p1">Quicklink chuyển sang engine render mã QR theo hướng <b>SVG-first</b> trên kiến trúc serverless hiện đại. Tốc độ sinh mã QR được cải thiện <b>gấp 5 lần</b> (từ ~500ms xuống chỉ còn ~100ms), độ sắc nét vector tuyệt đối trên mọi màn hình và bản in.</p>
 
-        <h4>2. Bổ sung Template LoaX</h4>
-        <p>Bên cạnh các template <code>compact</code>, <code>compact2</code>, <code>print</code>, <code>qr_only</code>, VietQR bổ sung template <b><code>loax</code> (2583x3719)</b> chuyên biệt cho dòng thiết bị Loa thanh toán và Loa thông báo chuyển khoản thông minh.</p>
+        <h4 data-i18n="modal_update_h2">2. Bổ sung Template LoaX</h4>
+        <p data-i18n="modal_update_p2">Bên cạnh các template <code>compact</code>, <code>compact2</code>, <code>print</code>, <code>qr_only</code>, VietQR bổ sung template <b><code>loax</code> (2583×3719)</b> chuyên biệt cho dòng thiết bị Loa thanh toán và Loa thông báo chuyển khoản thông minh.</p>
 
-        <h4>3. Chuyển đổi sang thư viện vietqr-core offline</h4>
-        <p>Để tạo mã QR độc lập không phụ thuộc vào hạ tầng mạng bên ngoài, hệ thống tích hợp sẵn thuật toán chuẩn EMVCo Napas247 tạo mã QR trực tiếp trên trình duyệt với thời gian phản hồi 0ms.</p>
+        <h4 data-i18n="modal_update_h3">3. Chuyển đổi sang thư viện vietqr-core offline</h4>
+        <p data-i18n="modal_update_p3">Để tạo mã QR độc lập không phụ thuộc vào hạ tầng mạng bên ngoài, hệ thống tích hợp sẵn thuật toán chuẩn EMVCo Napas247 tạo mã QR trực tiếp trên trình duyệt với thời gian phản hồi 0ms.</p>
 
-        <h4>4. Bảng chính sách tương thích ngược</h4>
+        <h4 data-i18n="modal_update_h4">4. Bảng chính sách tương thích ngược</h4>
         <table class="modal-table">
           <thead>
             <tr>
-              <th>Hạng mục</th>
-              <th>Cách xử lý & Lộ trình</th>
+              <th data-i18n="modal_update_th_item">Hạng mục</th>
+              <th data-i18n="modal_update_th_roadmap">Cách xử lý & Lộ trình</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><b>API /v2/generate</b></td>
-              <td>Hoạt động bình thường đến hết 31/12/2026. Chuyển sang thư viện <code>vietqr-core</code> để sinh mã offline.</td>
+              <td data-i18n="modal_update_r1_desc">Hoạt động bình thường đến hết 31/12/2026. Chuyển sang thư viện <code>vietqr-core</code> để sinh mã offline.</td>
             </tr>
             <tr>
               <td><b>Quicklink PNG / JPEG</b></td>
-              <td>SVG là tùy chọn khuyến khích. PNG vẫn được phục vụ bình thường.</td>
+              <td data-i18n="modal_update_r2_desc">SVG là tùy chọn khuyến khích. PNG vẫn được phục vụ bình thường.</td>
             </tr>
             <tr>
-              <td><b>Tra cứu Mã số thuế</b></td>
-              <td>Chuyển giao dịch vụ sang hệ thống <b>Xinvoice</b> (xinvoice.vn) trước 01/03/2027.</td>
+              <td><b data-i18n="modal_update_r3_title">Tra cứu Mã số thuế</b></td>
+              <td data-i18n="modal_update_r3_desc">Chuyển giao dịch vụ sang hệ thống <b>Xinvoice</b> (xinvoice.vn) trước 01/03/2027.</td>
             </tr>
             <tr>
-              <td><b>Tra cứu Số tài khoản</b></td>
-              <td>Chuyển dịch sang bộ <b>Cas Pay Out API</b> theo chuẩn Open Banking.</td>
+              <td><b data-i18n="modal_update_r4_title">Tra cứu Số tài khoản</b></td>
+              <td data-i18n="modal_update_r4_desc">Chuyển dịch sang bộ <b>Cas Pay Out API</b> theo chuẩn Open Banking.</td>
             </tr>
           </tbody>
         </table>
@@ -901,33 +901,33 @@
         <button id="closeLegalModalBtn" class="modal-close-btn" type="button" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <div class="legal-callout">
+        <div class="legal-callout" data-i18n="legal_callout">
           <b>Tuyên bố cam kết:</b> Website hoạt động hoàn toàn với tư cách là công cụ tiện ích mã nguồn mở và kỹ thuật độc lập, hướng tới phục vụ học tập, nghiên cứu và tiện ích thanh toán cá nhân/doanh nghiệp phi thương mại.
         </div>
 
         <div class="legal-card-item">
-          <h5><i class="fa-solid fa-shield-halved" style="color: var(--brand-green);"></i> 1. Bảo vệ Dữ liệu Cá nhân (Tuân thủ Nghị định 13/2023/NĐ-CP)</h5>
-          <p>Toàn bộ quá trình tạo mã QR, giải mã hình ảnh (Decoder) và phân tích cú pháp chuỗi EMVCo (Parser) được xử lý <b>100% phía trình duyệt (Client-Side)</b> của bạn. Máy chủ hoàn toàn không ghi log, không lưu trữ cơ sở dữ liệu và không thu thập bất kỳ thông tin số tài khoản, số tiền, họ tên hay lịch sử giao dịch nào của người dùng.</p>
+          <h5><i class="fa-solid fa-shield-halved" style="color: var(--brand-green);"></i> <span data-i18n="legal_sec1_title">1. Bảo vệ Dữ liệu Cá nhân (Tuân thủ Nghị định 13/2023/NĐ-CP)</span></h5>
+          <p data-i18n="legal_sec1_body">Toàn bộ quá trình tạo mã QR, giải mã hình ảnh (Decoder) và phân tích cú pháp chuỗi EMVCo (Parser) được xử lý <b>100% phía trình duyệt (Client-Side)</b> của bạn. Máy chủ hoàn toàn không ghi log, không lưu trữ cơ sở dữ liệu và không thu thập bất kỳ thông tin số tài khoản, số tiền, họ tên hay lịch sử giao dịch nào của người dùng.</p>
         </div>
 
         <div class="legal-card-item">
-          <h5><i class="fa-solid fa-file-contract" style="color: var(--primary);"></i> 2. Hoạt động Thanh toán (Tuân thủ Nghị định 52/2024/NĐ-CP)</h5>
-          <p>Hệ thống <b>KHÔNG</b> cung ứng dịch vụ trung gian thanh toán, không mở tài khoản thanh toán, không giữ tiền và không can thiệp vào dòng tiền giao dịch. Mã VietQR chỉ là phương tiện trực quan hóa thông tin thụ hưởng; giao dịch chuyển khoản thực tế diễn ra trực tiếp giữa người chuyển và ngân hàng thụ hưởng thông qua ứng dụng Mobile Banking được cấp phép bởi Ngân hàng Nhà nước Việt Nam.</p>
+          <h5><i class="fa-solid fa-file-contract" style="color: var(--primary);"></i> <span data-i18n="legal_sec2_title">2. Hoạt động Thanh toán (Tuân thủ Nghị định 52/2024/NĐ-CP)</span></h5>
+          <p data-i18n="legal_sec2_body">Hệ thống <b>KHÔNG</b> cung ứng dịch vụ trung gian thanh toán, không mở tài khoản thanh toán, không giữ tiền và không can thiệp vào dòng tiền giao dịch. Mã VietQR chỉ là phương tiện trực quan hóa thông tin thụ hưởng; giao dịch chuyển khoản thực tế diễn ra trực tiếp giữa người chuyển và ngân hàng thụ hưởng thông qua ứng dụng Mobile Banking được cấp phép bởi Ngân hàng Nhà nước Việt Nam.</p>
         </div>
 
         <div class="legal-card-item">
-          <h5><i class="fa-solid fa-copyright" style="color: #e31e24;"></i> 3. Quyền Sở hữu Trí tuệ & Nhãn hiệu</h5>
-          <p><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website là công cụ độc lập, không mạo danh và không đại diện pháp lý cho NAPAS hay Casso (VietQR.io). Mọi nhãn hiệu ngân hàng thuộc quyền sở hữu của các ngân hàng tương ứng.</p>
+          <h5><i class="fa-solid fa-copyright" style="color: #e31e24;"></i> <span data-i18n="legal_sec3_title">3. Quyền Sở hữu Trí tuệ & Nhãn hiệu</span></h5>
+          <p data-i18n="legal_sec3_body"><b>VietQR®</b> và <b>NAPAS®</b> là nhãn hiệu đã đăng ký của Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS). Website là công cụ độc lập, không mạo danh và không đại diện pháp lý cho NAPAS hay Casso (VietQR.io). Mọi nhãn hiệu ngân hàng thuộc quyền sở hữu của các ngân hàng tương ứng.</p>
         </div>
 
         <div class="legal-card-item">
-          <h5><i class="fa-solid fa-code" style="color: var(--secondary);"></i> 4. Tiêu chuẩn Kỹ thuật & Giấy phép Mã nguồn mở</h5>
-          <p>Hệ thống xây dựng dựa trên đặc tả kỹ thuật mở EMVCo QR Code Merchant-Presented Mode và tài liệu kỹ thuật từ Napas và VietQR.io. Phần mềm được phân phối tự do theo giấy phép mã nguồn mở <b>MIT License</b>.</p>
+          <h5><i class="fa-solid fa-code" style="color: var(--secondary);"></i> <span data-i18n="legal_sec4_title">4. Tiêu chuẩn Kỹ thuật & Giấy phép Mã nguồn mở</span></h5>
+          <p data-i18n="legal_sec4_body">Hệ thống xây dựng dựa trên đặc tả kỹ thuật mở EMVCo QR Code Merchant-Presented Mode và tài liệu kỹ thuật từ Napas và VietQR.io. Phần mềm được phân phối tự do theo giấy phép mã nguồn mở <b>MIT License</b>.</p>
         </div>
 
         <div class="legal-card-item">
-          <h5><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> 5. Giới hạn Trách nhiệm</h5>
-          <p>Người dùng có trách nhiệm kiểm tra lại thông tin người nhận tiền (Tên chủ tài khoản, Số tài khoản, Ngân hàng và Số tiền) trên màn hình xác nhận của ứng dụng ngân hàng trước khi xác thực giao dịch chuyển tiền.</p>
+          <h5><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> <span data-i18n="legal_sec5_title">5. Giới hạn Trách nhiệm</span></h5>
+          <p data-i18n="legal_sec5_body">Người dùng có trách nhiệm kiểm tra lại thông tin người nhận tiền (Tên chủ tài khoản, Số tài khoản, Ngân hàng và Số tiền) trên màn hình xác nhận của ứng dụng ngân hàng trước khi xác thực giao dịch chuyển tiền.</p>
         </div>
       </div>
       <div class="modal-footer">
