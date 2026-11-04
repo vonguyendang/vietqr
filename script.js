@@ -288,6 +288,11 @@ function switchTab(tabId) {
         panel.classList.toggle('active', panel.id === tabId);
     });
 
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
     const hashMap = {
         'tab-qr': '#qr-dong',
         'tab-decoder': '#giai-ma-qr',
@@ -512,6 +517,12 @@ function genAndScanQR() {
     placeholder.style.display = 'none';
     resultWrapper.style.display = 'flex';
     resultWrapper.style.opacity = '0.5';
+
+    if (window.innerWidth <= 992) {
+        setTimeout(() => {
+            resultWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
 
     imgEl.src = quicklinkUrl;
 
@@ -1177,6 +1188,12 @@ async function handleLookupStk() {
         resultCard.classList.remove('error');
         resultCard.classList.add('show');
 
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 80);
+        }
+
         if (data.code === '00' && data.data && data.data.accountName) {
             ownerNameEl.innerText = data.data.accountName;
             bankAndAccEl.innerText = `${bankObj.shortName} (${bankBin}) - STK: ${acc}`;
@@ -1251,6 +1268,12 @@ async function handleLookupMst(customTaxCode) {
             currentMstData = json.data;
             resultCard.classList.remove('error');
             resultCard.classList.add('show');
+
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 80);
+            }
 
             document.getElementById('mstCompanyName').innerText = json.data.name || 'Không có tên';
             document.getElementById('mstTaxId').innerText = json.data.id || taxCode;
