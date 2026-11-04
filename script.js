@@ -373,7 +373,7 @@ function formatBankOption(bank) {
     if (!bank.id) return bank.text;
     const logoUrl = $(bank.element).data('logo');
     if (!logoUrl) return bank.text;
-    return $('<span><img src="' + logoUrl + '" class="bank-logo" alt="logo" /> ' + bank.text + '</span>');
+    return $('<span class="bank-opt-wrapper"><img src="' + logoUrl + '" class="bank-logo" alt="logo" /><span class="bank-opt-text">' + bank.text + '</span></span>');
 }
 
 function initBankSelect(selector) {
