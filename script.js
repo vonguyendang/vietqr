@@ -272,6 +272,12 @@ function updateLanguage(lang) {
         }
     });
 
+    const tplEl = $('#qr-template-select');
+    if (tplEl.hasClass('select2-hidden-accessible')) {
+        tplEl.select2('destroy');
+        initTemplateSelect();
+    }
+
     updateDevSnippet();
 }
 
@@ -397,6 +403,113 @@ function initBankSelect(selector) {
         templateResult: formatBankOption,
         templateSelection: formatBankOption,
         width: '100%'
+    });
+}
+
+const templateMetadata = {
+    compact2: {
+        title: 'Print Compact',
+        dim: '540×640',
+        desc: 'Khung viền chi tiết (Khuyên dùng)',
+        descEn: 'Framed concise details (Recommended)',
+        icon: 'fa-solid fa-print',
+        color: '#00b06f',
+        bg: '#e8f8f2'
+    },
+    compact: {
+        title: 'Compact',
+        dim: '540×540',
+        desc: 'Chuẩn logo Napas & Ngân hàng',
+        descEn: 'Standard Napas & Bank logo',
+        icon: 'fa-solid fa-mobile-screen',
+        color: '#0062eb',
+        bg: '#eef5ff'
+    },
+    print: {
+        title: 'Bản in hóa đơn',
+        dim: '600×776',
+        desc: 'Đầy đủ thông tin in ấn',
+        descEn: 'Full billing details',
+        icon: 'fa-solid fa-file-invoice',
+        color: '#f59e0b',
+        bg: '#fef3c7'
+    },
+    qr_only: {
+        title: 'Chỉ mã QR',
+        dim: '480×480',
+        desc: 'Tối giản, không viền',
+        descEn: 'Minimalist, no frame',
+        icon: 'fa-solid fa-qrcode',
+        color: '#475569',
+        bg: '#f1f5f9'
+    },
+    loax: {
+        title: 'LoaX',
+        dim: '2583×3719',
+        desc: 'Dành cho Loa thanh toán',
+        descEn: 'Audio payment speaker',
+        icon: 'fa-solid fa-volume-high',
+        color: '#8b5cf6',
+        bg: '#f3e8ff'
+    }
+};
+
+function formatTemplateOption(item) {
+    if (!item.id) return item.text;
+    const meta = templateMetadata[item.id] || {
+        title: item.text,
+        dim: '',
+        desc: '',
+        icon: 'fa-solid fa-qrcode',
+        color: '#0062eb',
+        bg: '#eef5ff'
+    };
+    const desc = currentLang === 'en' ? (meta.descEn || meta.desc) : meta.desc;
+
+    return $(
+        '<span class="tpl-opt-wrapper">' +
+            '<span class="tpl-icon-box" style="background: ' + meta.bg + '; color: ' + meta.color + ';">' +
+                '<i class="' + meta.icon + '"></i>' +
+            '</span>' +
+            '<span class="tpl-content">' +
+                '<span class="tpl-top-row">' +
+                    '<span class="tpl-title">' + meta.title + '</span>' +
+                    '<span class="tpl-dim-badge">' + meta.dim + '</span>' +
+                '</span>' +
+                '<span class="tpl-desc">' + desc + '</span>' +
+            '</span>' +
+        '</span>'
+    );
+}
+
+function initTemplateSelect() {
+    $('#qr-template-select').select2({
+        minimumResultsForSearch: Infinity,
+        templateResult: formatTemplateOption,
+        templateSelection: formatTemplateOption,
+        width: '100%'
+    });
+
+    $('#qr-template-select').on('change', function() {
+        updateDevSnippet();
+    });
+}
+
+function initFormatSegmentedControl() {
+    const hiddenInput = document.getElementById('qr-format-select');
+    const buttons = document.querySelectorAll('.format-segment-btn');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const format = this.getAttribute('data-format');
+            if (hiddenInput) {
+                hiddenInput.value = format;
+                $(hiddenInput).trigger('change');
+            }
+            updateDevSnippet();
+        });
     });
 }
 
@@ -1525,9 +1638,11 @@ $(document).ready(function() {
         if ($(e.target).is('#legalModal')) $('#legalModal').removeClass('open');
     });
 
-    // 4. Initialize Select2
+    // 4. Initialize Select2 & Form Controls
     initBankSelect('#bank-select');
     initBankSelect('#stk-bank-select');
+    initTemplateSelect();
+    initFormatSegmentedControl();
 
     $('#bank-select').on('change', function() {
         $('#i_bank').val($(this).val());

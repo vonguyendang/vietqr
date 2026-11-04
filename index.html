@@ -140,20 +140,37 @@
                 <div class="formrow two-cols">
                   <div>
                     <label for="qr-template-select" data-i18n="label_template">Mẫu giao diện (Template):</label>
-                    <select id="qr-template-select">
-                      <option value="compact" selected data-i18n="opt_compact">Compact (540x540 - Logo Napas & Bank)</option>
-                      <option value="compact2" data-i18n="opt_compact2">Print Compact (540x640 - Khung thông tin)</option>
-                      <option value="print" data-i18n="opt_print">Bản in (600x776 - Đầy đủ chi tiết hóa đơn)</option>
-                      <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR (480x480 - Tối giản)</option>
-                      <option value="loax" data-i18n="opt_loax">LoaX (2583x3719 - Loa thông báo chuyển khoản)</option>
+                    <select id="qr-template-select" style="width: 100%;">
+                      <option value="compact2" selected data-i18n="opt_compact2">Print Compact (540×640 - Khung viền chi tiết)</option>
+                      <option value="compact" data-i18n="opt_compact">Compact (540×540 - Logo Napas & Bank)</option>
+                      <option value="print" data-i18n="opt_print">Bản in (600×776 - Đầy đủ chi tiết hóa đơn)</option>
+                      <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR (480×480 - Tối giản)</option>
+                      <option value="loax" data-i18n="opt_loax">LoaX (2583×3719 - Dành cho Loa thanh toán)</option>
                     </select>
                   </div>
                   <div>
-                    <label for="qr-format-select" data-i18n="label_format">Định dạng ảnh xuất ra:</label>
-                    <select id="qr-format-select">
-                      <option value="svg" selected data-i18n="opt_svg">SVG (Vector siêu nét - Khuyên dùng)</option>
-                      <option value="png" data-i18n="opt_png">PNG (Ảnh raster)</option>
-                    </select>
+                    <label data-i18n="label_format">Định dạng ảnh xuất ra:</label>
+                    <input type="hidden" id="qr-format-select" value="svg" />
+                    <div class="format-segmented-group" id="formatSegmentedGroup">
+                      <button type="button" class="format-segment-btn active" data-format="svg">
+                        <span class="fmt-icon-box fmt-svg">
+                          <i class="fa-solid fa-bolt"></i>
+                        </span>
+                        <span class="fmt-text-group">
+                          <span class="fmt-title" data-i18n="fmt_svg_title">SVG Vector</span>
+                          <span class="fmt-sub" data-i18n="fmt_svg_sub">Siêu nét • Khuyên dùng</span>
+                        </span>
+                      </button>
+                      <button type="button" class="format-segment-btn" data-format="png">
+                        <span class="fmt-icon-box fmt-png">
+                          <i class="fa-solid fa-image"></i>
+                        </span>
+                        <span class="fmt-text-group">
+                          <span class="fmt-title" data-i18n="fmt_png_title">PNG Raster</span>
+                          <span class="fmt-sub" data-i18n="fmt_png_sub">Ảnh tương thích</span>
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
