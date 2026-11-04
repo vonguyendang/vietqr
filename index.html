@@ -137,40 +137,39 @@
                   <input type="text" id="i_acc" required placeholder="Nhập số tài khoản hoặc Alias, Nickname" autocomplete="off" />
                 </div>
 
-                <div class="formrow two-cols">
-                  <div>
-                    <label for="qr-template-select" data-i18n="label_template">Mẫu giao diện (Template):</label>
-                    <select id="qr-template-select" style="width: 100%;">
-                      <option value="compact2" selected data-i18n="opt_compact2">Print Compact (540×640 - Khung viền chi tiết)</option>
-                      <option value="compact" data-i18n="opt_compact">Compact (540×540 - Logo Napas & Bank)</option>
-                      <option value="print" data-i18n="opt_print">Bản in (600×776 - Đầy đủ chi tiết hóa đơn)</option>
-                      <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR (480×480 - Tối giản)</option>
-                      <option value="loax" data-i18n="opt_loax">LoaX (2583×3719 - Dành cho Loa thanh toán)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label data-i18n="label_format">Định dạng ảnh xuất ra:</label>
-                    <input type="hidden" id="qr-format-select" value="svg" />
-                    <div class="format-segmented-group" id="formatSegmentedGroup">
-                      <button type="button" class="format-segment-btn active" data-format="svg">
-                        <span class="fmt-icon-box fmt-svg">
-                          <i class="fa-solid fa-bolt"></i>
-                        </span>
-                        <span class="fmt-text-group">
-                          <span class="fmt-title" data-i18n="fmt_svg_title">SVG Vector</span>
-                          <span class="fmt-sub" data-i18n="fmt_svg_sub">Siêu nét • Khuyên dùng</span>
-                        </span>
-                      </button>
-                      <button type="button" class="format-segment-btn" data-format="png">
-                        <span class="fmt-icon-box fmt-png">
-                          <i class="fa-solid fa-image"></i>
-                        </span>
-                        <span class="fmt-text-group">
-                          <span class="fmt-title" data-i18n="fmt_png_title">PNG Raster</span>
-                          <span class="fmt-sub" data-i18n="fmt_png_sub">Ảnh tương thích</span>
-                        </span>
-                      </button>
-                    </div>
+                <div class="formrow">
+                  <label for="qr-template-select" data-i18n="label_template">Mẫu giao diện (Template):</label>
+                  <select id="qr-template-select" style="width: 100%;">
+                    <option value="compact2" selected data-i18n="opt_compact2">Print Compact (540×640 - Khung viền chi tiết)</option>
+                    <option value="compact" data-i18n="opt_compact">Compact (540×540 - Logo Napas & Bank)</option>
+                    <option value="print" data-i18n="opt_print">Bản in (600×776 - Đầy đủ chi tiết hóa đơn)</option>
+                    <option value="qr_only" data-i18n="opt_qr_only">Chỉ mã QR (480×480 - Tối giản)</option>
+                    <option value="loax" data-i18n="opt_loax">LoaX (2583×3719 - Dành cho Loa thanh toán)</option>
+                  </select>
+                </div>
+
+                <div class="formrow">
+                  <label data-i18n="label_format">Định dạng ảnh xuất ra:</label>
+                  <input type="hidden" id="qr-format-select" value="svg" />
+                  <div class="format-segmented-group" id="formatSegmentedGroup">
+                    <button type="button" class="format-segment-btn active" data-format="svg">
+                      <span class="fmt-icon-box fmt-svg">
+                        <i class="fa-solid fa-bolt"></i>
+                      </span>
+                      <span class="fmt-text-group">
+                        <span class="fmt-title" data-i18n="fmt_svg_title">SVG Vector</span>
+                        <span class="fmt-sub" data-i18n="fmt_svg_sub">Siêu nét • Khuyên dùng</span>
+                      </span>
+                    </button>
+                    <button type="button" class="format-segment-btn" data-format="png">
+                      <span class="fmt-icon-box fmt-png">
+                        <i class="fa-solid fa-image"></i>
+                      </span>
+                      <span class="fmt-text-group">
+                        <span class="fmt-title" data-i18n="fmt_png_title">PNG Raster</span>
+                        <span class="fmt-sub" data-i18n="fmt_png_sub">Ảnh tương thích</span>
+                      </span>
+                    </button>
                   </div>
                 </div>
 
@@ -609,6 +608,24 @@
                 <span data-i18n="stk_auth_toggle">⚙️ Cấu hình API Key (Tùy chọn dành cho Doanh nghiệp)</span>
               </button>
               <div id="stkAuthContent" class="accordion-content">
+                <div class="stk-guide-box">
+                  <div class="stk-guide-header">
+                    <h5><i class="fa-solid fa-key"></i> <span data-i18n="stk_guide_title">Hướng dẫn nhận API Key miễn phí:</span></h5>
+                    <a href="https://my.vietqr.io" target="_blank" rel="noopener noreferrer" class="stk-guide-link">
+                      <span data-i18n="stk_guide_link">Lấy Key tại my.vietqr.io</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                  </div>
+                  <ul class="stk-guide-steps">
+                    <li data-i18n="stk_guide_step1">1. Đăng ký & đăng nhập tài khoản tại <strong>my.vietqr.io</strong> (hoặc <strong>casso.vn</strong>).</li>
+                    <li data-i18n="stk_guide_step2">2. Vào mục <strong>Tích hợp API</strong> ➔ <strong>Tạo ứng dụng</strong> để lấy Client ID và API Key.</li>
+                    <li data-i18n="stk_guide_step3">3. Dán vào 2 ô bên dưới (trình duyệt tự động lưu an toàn).</li>
+                  </ul>
+                  <div class="stk-guide-cf-tip" data-i18n="stk_guide_admin_tip">
+                    💡 Dành cho Admin web: Thiết lập biến môi trường VIETQR_CLIENT_ID & VIETQR_API_KEY trong Cloudflare Pages để mọi khách truy cập web đều tra cứu được ngay mà không cần nhập key.
+                  </div>
+                </div>
+
                 <div class="formrow" style="margin-bottom: 12px;">
                   <label for="stk-client-id" data-i18n="stk_client_id">x-client-id (Lấy từ my.vietqr.io):</label>
                   <input type="text" id="stk-client-id" placeholder="VD: casso_client_id_..." />

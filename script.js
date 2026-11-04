@@ -1337,12 +1337,22 @@ async function handleLookupStk() {
             statusBadge.style.background = 'var(--badge-green-bg)';
             statusBadge.style.color = 'var(--badge-green-text)';
         } else if (data.code === '401') {
-            ownerNameEl.innerText = "YÊU CẦU API KEY TỪ CASSO";
+            ownerNameEl.innerText = "YÊU CẦU API KEY TỪ VIETQR / CASSO";
             bankAndAccEl.innerText = `${bankObj.shortName} - STK: ${acc} (Ngân hàng ${bankObj.lookupSupported ? 'hỗ trợ tra cứu' : 'chưa hỗ trợ'})`;
             statusBadge.innerText = 'Cần API Key';
             statusBadge.style.background = 'var(--badge-orange-bg)';
             statusBadge.style.color = 'var(--badge-orange-text)';
-            alert("API tra cứu STK yêu cầu Client ID & API Key từ https://my.vietqr.io hoặc casso.vn. Vui lòng bấm vào '⚙️ Cấu hình API Key' để nhập khóa.");
+            
+            // Tự động mở khung cấu hình API Key và cuộn tới ô nhập liệu
+            const authContent = $('#stkAuthContent');
+            if (!authContent.hasClass('open')) {
+                authContent.addClass('open');
+                $('#toggleStkAuthBtn').find('i').removeClass('fa-chevron-right').addClass('fa-chevron-down');
+            }
+            setTimeout(() => {
+                authContent[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                $('#stk-client-id').focus();
+            }, 100);
         } else {
             ownerNameEl.innerText = data.desc || 'Không thể tra cứu số tài khoản này';
             bankAndAccEl.innerText = `${bankObj.shortName} - STK: ${acc}`;
@@ -1793,7 +1803,19 @@ $(document).ready(function() {
         copyToClipboard(document.getElementById('deeplinkUrlText').innerText, this);
     });
 
-    // 11. STK lookup controls
+    // 11. STK lookup controls & Credentials Storage
+    const savedClientId = localStorage.getItem('vietqr_client_id') || '';
+    const savedApiKey = localStorage.getItem('vietqr_api_key') || '';
+    if (savedClientId) $('#stk-client-id').val(savedClientId);
+    if (savedApiKey) $('#stk-api-key').val(savedApiKey);
+
+    $('#stk-client-id').on('input', function() {
+        localStorage.setItem('vietqr_client_id', $(this).val().trim());
+    });
+    $('#stk-api-key').on('input', function() {
+        localStorage.setItem('vietqr_api_key', $(this).val().trim());
+    });
+
     $('#toggleStkAuthBtn').click(function() {
         $('#stkAuthContent').toggleClass('open');
         $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
